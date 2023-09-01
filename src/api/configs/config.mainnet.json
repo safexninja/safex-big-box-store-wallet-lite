@@ -1,13 +1,9 @@
 {
     "network": "mainnet",
-    "daemonAddress": "http://localhost",
+    "daemonAddress": "http://rpc.safex.org",
     "daemonPort": 17402,
-    "port": 80,
-    "sslPort": 4436,
-    "dbHost": "127.0.0.1",
-    "dbUser": "safexbigbox",
-    "dbPassword": "safexbigbox",
-    "dbName": "safexbigbox",
-    "dbPort": 4438
+    "port": 3001,
+    "dbName": "safexbigbox"
+    
 }
 

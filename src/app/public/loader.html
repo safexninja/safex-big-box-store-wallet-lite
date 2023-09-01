@@ -169,7 +169,6 @@
             let explorerOnline = false
 
             setInterval(()=>{
-
         
                 let periods = ""
                 for(i=1; i<=counter; i++){
@@ -195,48 +194,40 @@
                     } 
                 })
 
-                // //  check api server
-                // const apiServer = new Request("/ws/online", {
-                //     method: "GET",
-                //     });
+                //  check api server
+                const apiServer = new Request("http://localhost:3001/api/online", {
+                    method: "GET",
+                    });
 
-                // fetch(apiServer)
-                // .then((response) => {
-                //     if (response.status === 200) {
-                //         document.getElementById('status_api_server').innerHTML = '<i style="color: #28d205;font-size: x-large;" class="bx bx-check-circle ms-1"></i>'
-                //         apiServerOnline = true
-                //     } 
-                // })
+                fetch(apiServer)
+                .then((response) => {
+                    if (response.status === 200) {
+                        document.getElementById('status_api_server').innerHTML = '<i style="color: #28d205;font-size: x-large;" class="bx bx-check-circle ms-1"></i>'
+                        apiServerOnline = true
+                    } 
+                })
 
-                // // check wallet server
-                // const walletServer = new Request("/ws/online", {
-                //     method: "GET",
-                //     });
+                // check wallet server
+                const walletServer = new Request("http://localhost:3002/ws/online", {
+                    method: "GET",
+                    });
 
-                // fetch(walletServer)
-                // .then((response) => {
-                //     if (response.status === 200) {
-                //         document.getElementById('status_wallet_server').innerHTML = '<i style="color: #28d205;font-size: x-large;" class="bx bx-check-circle ms-1"></i>'
-                //         walletServerOnline = true
-                //     } 
-                // })
+                fetch(walletServer)
+                .then((response) => {
+                    if (response.status === 200) {
+                        document.getElementById('status_wallet_server').innerHTML = '<i style="color: #28d205;font-size: x-large;" class="bx bx-check-circle ms-1"></i>'
+                        walletServerOnline = true
+                    } 
+                })
 
-
-                if(appServerOnline){
+                if(appServerOnline && apiServerOnline && walletServerOnline){
                     setTimeout(()=>{
                         window.location.replace('http://localhost:3000')
                     }, 500)
                    
                 } 
 
-                // if(appServerOnline && apiServerOnline && walletServerOnline){
-                //     setTimeout(()=>{
-                //         window.location.reload()
-                //     }, 500)
-                   
-                // } 
-
-            }, 2000)
+            }, 1000)
 
         </script>
        

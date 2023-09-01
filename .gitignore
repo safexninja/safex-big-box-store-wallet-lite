@@ -10,3 +10,4 @@ files/blockchain/
 files/database/
 files/wallets/
 src/common/auth/*.json
+out/

@@ -1,81 +1,119 @@
 import {app, BrowserWindow} from 'electron'
-import { spawn } from "child_process";
+import { ChildProcess, fork } from "child_process";
 import path from "path";
-const name = 'safex-big-box-store'
+// const name = 'Safex-Big-Box-Store'
+// const appName = app.getPath("exe");
 
-const appName = app.getPath("exe");
+const userDataPath = app.getPath("userData");
 
-const expressPath = appName.endsWith(`${name}.exe`)
-  ? path.join("./resources/app.asar", "./build/app/server/app-server.js")
-  : "./build/app/server/app-server.js";
+let appServerProcess: ChildProcess
+let apiServerProcess: ChildProcess
+let walletServerProcess: ChildProcess
+process.env.FILE_STORE_DIR=userDataPath
 
+// const expressPath = appName.endsWith(`${name}.exe`)
+//   ? path.join("./resources/app.asar", "./build/app/server/app-server.js")
+//   : "./build/app/server/app-server.js";
 
+ 
 
 function createWindow() {
 
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
+    // Create the browser window.
+    const mainWindow = new BrowserWindow({
     minWidth: 1400,
     minHeight: 800,
     width: 1400,
     height: 800,
     webPreferences: {
         webSecurity: false
-      }
-  });
+        }
+    });
 
-  console.log('path: ' + expressPath)
-  const expressAppProcess = spawn('node', [expressPath], { env: { ELECTRON_RUN_AS_NODE: "1" } });
-  // and load the index.html of the app.
-    //   mainWindow.loadURL('http://localhost:3000')
     mainWindow.loadFile(path.join(__dirname, '../public/loader.html'));
 
-    // werkt niet
     mainWindow.on('close', ()=>{
-        const appServer = new Request("http://localhost:3000/app/shutdown", {
-            method: "GET",
-            });
+        closeBackgroundServers();
     })
 
-    
-
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  createWindow();
 
-  app.on("activate", function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
+function initializeDataBase() {
+
+}
+
+function startBackgroundServers() {
+
+    appServerProcess = fork(path.join(__dirname, '../server/app-server.js'), {detached: true})
+    apiServerProcess = fork(path.join(__dirname, '../../api/api-server.js'), {detached: true})
+    walletServerProcess = fork(path.join(__dirname, '../../wallet/wallet-server.js'), {detached: true})
+
+}
+
+function closeBackgroundServers(){
+
+        // app server
+        const appServerShutDownRequest = new Request("http://localhost:3000/app/shutdown", {
+            method: "GET",
+        });
+
+        fetch(appServerShutDownRequest)
+        .then((response) => {
+            appServerProcess.kill()
+        })
+        .catch()
+
+        // api server
+        const apiServerShutDownRequest = new Request("http://localhost:3001/api/shutdown", {
+            method: "GET",
+        });
+
+        fetch(apiServerShutDownRequest)
+        .then((response) => {
+            apiServerProcess.kill()
+        })
+        .catch()
+
+        // wallet server
+        const walletServerShutDownRequest = new Request("http://localhost:3002/ws/shutdown", {
+            method: "GET",
+        });
+
+        fetch(walletServerShutDownRequest)
+        .then((response) => {
+            walletServerProcess.kill()
+        })
+        .catch()
+}
+
+
+
+app.whenReady().then(() => {
+
+    createWindow();
+    initializeDataBase();
+    startBackgroundServers();
+
+    app.on("activate", function () {
+        // mac create window in open when there are no other windows open.
+        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
 });
 
 
-// werkt niet
+// does not work?
 app.on('quit', ()=>{
-    const appServer = new Request("http://localhost:3000/app/shutdown", {
-        method: "GET",
-        });
+   //TO DO
+   closeBackgroundServers()
 })
 
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    
-
+  if (process.platform !== "darwin") { // not on Mac, keep it open there
     app.quit();
   }
 });
 
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.

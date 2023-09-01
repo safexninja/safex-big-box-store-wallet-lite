@@ -27,15 +27,12 @@ export const CONFIG = {
     FileStoreDir: process.env.FILE_STORE_DIR || configuration.fileStoreDir,
     WalletInactiveTimeout: process.env.WALLET_INTACTIVE_TIMEOUT || configuration.walletInactiveTimeout,
     Port: process.env.PORT || configuration.port,
-    DbHost: process.env.DB_HOST || configuration.dbHost,
     DbName: process.env.DB_NAME || configuration.dbName,
-    DbUser: process.env.DB_USER || configuration.dbUser,
-    DbPassword: process.env.DB_PASSWORD || configuration.dbPassword,
-    DbPort: process.env.DB_PORT || configuration.dbPort,
     HashedMasterPassword: ""
 };
 
-CONFIG.HashedMasterPassword = crypto.createHash(CONFIG.DbPassword)
+// TODO impl other method for hashing users password
+CONFIG.HashedMasterPassword = crypto.createHash("safex")
 
 // log(LogLevel.INFO, "CONFIG: " +  JSON.stringify(CONFIG))
 

@@ -2,12 +2,7 @@
     "network": "stagenet",
     "daemonAddress": "http://localhost",
     "daemonPort": 30393,
-    "port": 8080,
-    "sslPort": 4436,
-    "dbHost": "127.0.0.1",
-    "dbUser": "safexbigbox",
-    "dbPassword": "safexbigbox",
-    "dbName": "safexbigbox",
-    "dbPort": 4438
+    "port": 3001,
+    "dbName": "safexbigbox"
 }
 

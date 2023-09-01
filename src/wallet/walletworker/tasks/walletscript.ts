@@ -1238,7 +1238,7 @@ async function handleOpenWallet(err:any, openWallet: any) {
 
 async function init() {
     try {
-        await database.connectDb(CONFIG.DbHost, CONFIG.DbName, CONFIG.DbUser, CONFIG.DbPassword, CONFIG.DbPort)
+        // await database.connectDb(CONFIG.DbHost, CONFIG.DbName, CONFIG.DbUser, CONFIG.DbPassword, CONFIG.DbPort)
         let connectionMsg: WorkerReponseMessage = {type: WsResponseType.CONNECTED, data: { status: "ready"}}
         parentPort.postMessage(connectionMsg)
     } catch (error) {

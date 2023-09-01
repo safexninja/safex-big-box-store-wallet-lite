@@ -119,6 +119,12 @@ app.get('/ws/online', (req: Request, res:any) => {
     res.sendStatus(200)
 })
 
+app.get('/ws/shutdown', async (req, res) => {
+    shutdown()
+    process.exit()
+})
+
+
 app.get('*', (req: Request, res:any) => {
     res.sendStatus(404)
 })
@@ -126,3 +132,12 @@ app.get('*', (req: Request, res:any) => {
 server.listen(CONFIG.Port, () => {
     log(LogLevel.MESSAGE, `Wallet Server on ${CONFIG.Network} is up on port ${CONFIG.Port}`)
 })
+
+function shutdown() {
+    log(LogLevel.WARN, "Shutting down WALLET server...")
+    server.close();
+  }
+  
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
+  

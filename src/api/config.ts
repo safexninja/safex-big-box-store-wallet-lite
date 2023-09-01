@@ -23,14 +23,11 @@ export const CONFIG = {
     DaemonAddress: process.env.DAEMON_ADDRESS || configuration.daemonAddress,
     DaemonPort: process.env.DAEMON_PORT ||configuration.daemonPort,
     Port: process.env.PORT || configuration.port,
-    DbHost: process.env.DB_HOST || configuration.dbHost,
     DbName: process.env.DB_NAME || configuration.dbName,
-    DbUser: process.env.DB_USER || configuration.dbUser,
-    DbPassword: process.env.DB_PASSWORD || configuration.dbPassword,
-    DbPort: process.env.DB_PORT || configuration.dbPort,
     HashedMasterPassword: ""
 };
 
-CONFIG.HashedMasterPassword = crypto.createHash(CONFIG.DbPassword)
+// TODO impl other method for hashing users password
+CONFIG.HashedMasterPassword = crypto.createHash("safex")
 
 // log(LogLevel.INFO, "CONFIG: " +  JSON.stringify(CONFIG))

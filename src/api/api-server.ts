@@ -3102,6 +3102,11 @@ app.get('/api/online', async (req:  Request, res: Response) => {
     res.sendStatus(200)
 })
 
+app.get('/api/shutdown', async (req, res) => {
+    shutdown()
+    process.exit()
+})
+
 
 app.get('/api/user/count', async (req:  Request, res: Response) => {
     try {
@@ -3227,39 +3232,39 @@ server.listen(CONFIG.Port, () => {
     log(LogLevel.MESSAGE, `API server running on ${CONFIG.Network} is up on port ${CONFIG.Port}`)
 })
 
-async function connectToDatabase() {
-    try {
-        await connectDb(CONFIG.DbHost, CONFIG.DbName, CONFIG.DbUser, CONFIG.DbPassword, CONFIG.DbPort)
+// async function connectToDatabase() {
+//     try {
+//         await connectDb(CONFIG.DbHost, CONFIG.DbName, CONFIG.DbUser, CONFIG.DbPassword, CONFIG.DbPort)
 
-    } catch (error) {
-        log(LogLevel.ERROR, `Can not connect to database on host ${CONFIG.DbHost}, database ${CONFIG.DbName} with user ${CONFIG.DbUser} and provid password`)
+//     } catch (error) {
+//         log(LogLevel.ERROR, `Can not connect to database on host ${CONFIG.DbHost}, database ${CONFIG.DbName} with user ${CONFIG.DbUser} and provid password`)
 
-        var figlet = require('figlet');
-        figlet('NO DATABASE CONNECTION ...', function(err: any, data:any) {
-            if (err) {
-                console.dir(err);
-                return;
-            }
-            // do not delete, this is useful output to the console
-            console.log(data)
-        });
+//         var figlet = require('figlet');
+//         figlet('NO DATABASE CONNECTION ...', function(err: any, data:any) {
+//             if (err) {
+//                 console.dir(err);
+//                 return;
+//             }
+//             // do not delete, this is useful output to the console
+//             console.log(data)
+//         });
 
-        figlet('WRONG PASSWORD ?', function(err: any, data:any) {
-            if (err) {
-                console.dir(err);
-                return;
-            }
-             // do not delete, this is useful output to the console
-            console.log(data)
-        });
+//         figlet('WRONG PASSWORD ?', function(err: any, data:any) {
+//             if (err) {
+//                 console.dir(err);
+//                 return;
+//             }
+//              // do not delete, this is useful output to the console
+//             console.log(data)
+//         });
 
-        setTimeout(()=>{
-            process.exit(1);
-        }, 3000)
+//         setTimeout(()=>{
+//             process.exit(1);
+//         }, 3000)
         
-    }
+//     }
     
-}
+// }
 
 async function enrichOpenPurchasesAndOrders(){
     log(LogLevel.INFO, "Enriching purchases and order now: " + convertTimestampToDate(Date.now()))
@@ -3410,4 +3415,14 @@ async function enrichOpenPurchasesAndOrders(){
 
 setInterval(enrichOpenPurchasesAndOrders, 60000)
 
-connectToDatabase()
+// connectToDatabase()
+
+
+
+function shutdown() {
+    log(LogLevel.WARN, "Shutting down API server...")
+    server.close();
+  }
+  
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
