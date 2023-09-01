@@ -1,0 +1,42 @@
+<div id="page_purchases" class="d-none">
+
+
+<div class="row mt-2">
+    <div class="col-8 col-md-2">
+        <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="purchase_auto_refresh" checked="">
+        <label class="form-check-label" for="purchase_auto_refresh">Auto refresh</label>
+        <i data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-custom-class="custom-tooltip" data-bs-title="Auto fresh page and check for new messages every minute" style="color:#424dce;vertical-align: middle;margin-bottom: 2px;" class="bx bxs-info-circle ms-2"></i>
+        </div>
+    </div>
+    <div class="col">
+        <i class="bx bx-sync icon_small me-2 walleticons" id="purchase_refresh"></i>
+    </div>
+     
+</div>
+
+<br>
+
+<h5 class="my-3">Open Purchases</h5>
+<hr>
+<div class="container py-1 px-0 float-md-start" id="container_open_purchases">
+</div>
+
+<h5 class="my-3 mt-5">Awaiting Delivery</h5>
+<hr>
+<div class="container py-1 px-0 float-md-start" id="container_awaiting_purchases">
+</div>
+
+<h5 class="my-3 mt-5">Delivered</h5>
+<hr>
+<div class="container py-1 px-0 float-md-start" id="container_delivered_purchases">
+</div>
+
+<h5 class="my-3 mt-5">Closed</h5>
+<hr>
+<button type="button" id="btn_load_closed_purchases" class="btn btn-primary float-start ms-0 my-3">Load</button>
+<div class="container py-1 px-0 float-md-start" id="container_closed_purchases">
+</div>
+
+</div>
+

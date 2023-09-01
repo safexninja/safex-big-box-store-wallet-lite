@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    {{#refresh}}
+        <meta http-equiv="refresh" content="10">
+    {{/refresh}}
+    <title>Safex Blockchain Explorer</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="icon" href="favicon.png">
+
+    {{#js_files}}{{/js_files}}
+
+</head>
+<body>
+<main>
+<div>
+    <div class="header">
+        <div class="logo-wrap">
+            <a href="/page/0">
+                <img src="/images/logo.png" alt="logo" class="logo"/>
+            </a>
+        </div>
+
+        <form action="/search" method="get" class="search-form">
+            <input type="text" name="value" size="120" placeholder="block height, block hash, transaction hash">
+            <button type="submit" class="submit-btn">
+                Search
+            </button>
+        </form>
+    </div>
+</div>

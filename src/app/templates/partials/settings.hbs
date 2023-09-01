@@ -1,0 +1,77 @@
+<div id="page_settings" class="d-none">
+
+    <!-- User Settings Form Area -->
+    <div class="container py-1 px-0">
+
+            <div class="row">
+                <div class="col">
+                    View the <a href="https://github.com/safexninja/safex-big-box-store-wallet/blob/master/LICENSE-AGREEMENT.md" target="_blank">License Agreement, Terms & Conditions</a> online
+                </div>
+            </div>
+    </div>
+
+
+
+    <!-- User Settings Form Area -->
+    <div class="container pt-3 pb-4 px-0">
+
+            <div class="row">
+                <div class="col-md-4">
+
+
+                    <form id="form_settings" class="needs-validation"  autocomplete="off" novalidate>                        
+                    </form>
+
+
+                    <form id="form_user_settings" class="needs-validation" autocomplete="off" novalidate>
+
+                       <fieldset id="form_user_settings_fields">
+
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Default Country</label>
+                            <select class="form-select" aria-label="Select default country" id="select_default_country" aria-describedby="help_default_country">
+                            </select>
+                            <div id="help_default_country" class="form-text">Please select a country. This country will be selected by default in the Market, and will be appended to your address</div>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="input_default_address" class="form-label">Default Address</label>
+                            <textarea placeholder="Provide full name, street, (aparment) number, zipcode, state ..." type="text" class="form-control form-control-sm mt-1" id="input_default_address" rows="10" style="font-size: smaller;" aria-describedby="help_default_address"></textarea>
+                            <div class="invalid-feedback" feedback-for="input_default_address"></div>
+                            <div id="help_default_address" class="form-text">Provide an address. This address will be used as default delivery address when making a purchase. You can leave out the country; the selected country above will be automatically added to your address when doing a purchase.</div>
+                        </div>
+
+                        </fieldset>
+
+                    
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success float-end ms-2" id="btn_create_offer">Save!</button>                    
+                        </div>
+                    
+                    
+                    </form>
+
+                </div>
+            </div>
+                 
+    </div>
+
+
+<br><br>
+    <!-- User Settings Form Area -->
+    <div class="container pt-4 px-0">
+
+        <h3>Active Store Front Merchant Registrations</h3>
+        <hr><br>
+
+          <div class="container px-0" id="user_active_registations">
+        </div>
+                
+    </div>
+
+
+
+
+</div>
+

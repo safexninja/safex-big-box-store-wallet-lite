@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {{>head}}
+</head>
+
+<body>
+
+    <!-- Banner -->
+    <div class="container">
+        <header class="pb-3 mb-4 border-bottom">
+            <span>
+                <img src="styles/images/bigboxlogo.png" height="25px">
+                <span class="ms-2">Safex Big Box Store</span>
+            </span>
+        </header>
+
+        <div style="border-color: #63d0fb !important;border-style: solid;border-width: 1px;background-image: url(&quot;styles/images/bannerbg.png&quot;);" class="banner p-2 mb-4 bg-light rounded-3 text-white">
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-8">
+                        <div class="p-5">
+                                <h1 class="display-5 fw-bold py-2">Welcome!</h1>
+                                <p class="col-md-8 fs-4">Safex Big Box Store opens up a new world of e-commerce!</p>
+                        </div>
+                    </div>
+                     <div class="col-4 p-3">
+
+                            <img src="styles/images/bannerbgsfx.png" style="max-height: 250px;" class="float-end">
+                    </div>
+
+                </div>              
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Form Area -->
+    <div class="container py-4">
+
+        <div class="row">
+
+             <div class="col-sm">
+                <!-- empty column for spacing left -->
+            </div>
+
+               
+            <div class="col-sm">
+
+                <div id="alert_area"></div>
+
+                 <form id="form_login" novalidate>
+
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">User</label>
+                        <select class="form-select" aria-label="Select user" id="select_user_name" aria-describedby="help_user_name">
+                        </select>
+                        <div id="help_user_name" class="form-text">Please select a user</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="input_user_password">
+                    </div>
+    
+                <div class="row">
+                    <div class="col-sm">
+                         <button class="btn btn-secondary mb-3" type="button" id="btn_create_user" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+                            </svg>
+                        Create User</button>
+                    </div>
+                    <div class="col-sm">
+                       <button type="submit" class="btn btn-primary mb-3 float-md-end" id="btn_login">Login</button>
+                    </div>
+                </div>
+                    
+                </form>
+            </div>
+
+            <div class="col-sm">
+              <!-- empty column for spacing right -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Create User Modal -->
+    <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="createUserModalLabel">Create User</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="alert alert-warning" id="modal_alert_area_create_user" role="alert">
+                    Please make sure you've got the password right and remember it! It can not be reset when forgotten.
+                    </div>
+
+                    
+                    <form id="form_create_user" class="needs-validation" novalidate>
+
+                        <div class="mb-3">
+                            <label for="input_new_user_name" class="form-label">User</label>
+                            <input type="text" class="form-control" id="input_new_user_name">
+                             <div class="invalid-feedback" feedback-for="input_new_user_name"></div>
+                            
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="input_new_user_password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="input_new_user_password">
+                            <div class="invalid-feedback" feedback-for="input_new_user_password"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="input_new_user_password_confirm" class="form-label">Password Confirm</label>
+                            <input type="password" class="form-control" id="input_new_user_password_confirm">
+                             <div class="invalid-feedback" feedback-for="input_new_user_password_confirm"></div>
+
+                        </div>
+
+                        <div class="mb-3">
+                          <button type="submit" class="btn btn-success float-end" onclick="" id="btn_create_user">Create!</button>
+                        </div>
+                        
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  // Create User Modal -->
+
+
+    {{>footer}}
+    {{>scripts}}
+    <script src="/js/login.js"></script>
+</body>
+
+</html>

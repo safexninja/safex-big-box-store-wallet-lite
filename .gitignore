@@ -1,0 +1,12 @@
+package-lock.json
+node_modules/
+*.log
+local/
+build/
+.env
+cert/key.pem
+cert/cert.pem
+files/blockchain/
+files/database/
+files/wallets/
+src/common/auth/*.json

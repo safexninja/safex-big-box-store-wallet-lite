@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+:root {
+  --banner-bg: #ccd2e1;
+}
+
+.bc_syncing {
+  color: #ff1515;
+}
+
+i[state=closed]{
+  color: #000000;
+}
+
+i[state=initiated]{
+  color: #ffaa07;
+}
+
+i[state=connected]{
+  color: #1ed8f7
+}
+
+i[state=open]{
+  color: #28d205
+}
+
+i[state=closing]{
+  color: #f77a1e
+}
+
+i[state=warning]{
+  color: #df0000
+}
+
+.walleticons {
+  color: #929397;
+}
+
+.walleticons:hover {
+  color: #f77a1e;
+  cursor: pointer;
+}
+
+.inline-bg{
+  background-color: #e7f1ff;
+}
+
+.text_small {
+  font-size: small;
+}
+
+.text_xsmall {
+  font-size: x-small;
+}
+
+.text_xxsmall {
+  font-size: 7px;
+}
+
+.icon_small {
+  font-size: 1.45rem;
+}
+
+.icon_xsmall {
+  font-size: 1.10rem;
+}
+
+.icon_button {
+  cursor: pointer;
+}
+
+.icon_button:hover {
+  color: #3b80e2;
+}
+
+
+.offer_card_image {
+  height: 200px;
+  object-fit: scale-down;
+}
+
+.offer_card {
+  height: 475px;
+}
+
+.offer_card_description {
+  font-size: small;
+}
+
+[data-function=open_offer]{
+  cursor: pointer;
+}
+
+.message_row {
+  display: grid !important;
+}
+
+.message {
+  width: 60% !important;
+  border-radius: 7px;
+  padding: 10px;
+  margin-bottom: 5px;
+
+}
+
+.message_send {
+  background-color:#d9f0d4;
+  justify-self: right;
+}
+
+.message_received {
+  width: 60%;
+  background-color: #d7e5e8;
+  justify-self: left;
+}
+
+.message_automated {
+  font-style: italic;
+  background-color: #cbccce !important;
+}
+
+.message_data{
+  color:#ccd2e1;
+}
+
+.nav_icon_unread {
+  color: #ff8f00;
+}
+
+.status_action {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: #929397;
+  color: #08b4d0 ;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.status_action:hover {
+  text-decoration-color: #4e5058;
+}
+
+.rowhighlight:hover {
+  background-color: #f4f5f7;
+}
+
+.pastel-bg-warning {
+  background-color: #f9efc7 !important;
+}
+
+.pastel-bg-info {
+  background-color: #d6e8f9 !important;
+}
+
+.pastel-bg-success {
+  background-color: #bde1ac !important
+}
+
+.pastel-bg-dark {
+  background-color: #b1b7b7 !important;
+}
+
+.unrated {
+  color: #d56f48 !important;
+}
+
+.rated {
+  color: #f8d407 !important;
+  font-size: smaller !important;
+}
+
+.highlight {
+  background-color: beige !important;
+}

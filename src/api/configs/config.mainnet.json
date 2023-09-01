@@ -1,0 +1,13 @@
+{
+    "network": "mainnet",
+    "daemonAddress": "http://localhost",
+    "daemonPort": 17402,
+    "port": 80,
+    "sslPort": 4436,
+    "dbHost": "127.0.0.1",
+    "dbUser": "safexbigbox",
+    "dbPassword": "safexbigbox",
+    "dbName": "safexbigbox",
+    "dbPort": 4438
+}
+

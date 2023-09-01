@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+
+  safex-big-box-update:
+    container_name: safex-big-box-update
+    privileged: true
+    image: safex-big-box-update:1.0
+    build:
+       context: docker/update
+    stdin_open: true
+    working_dir: /home/docker/safex
+    command: bash -c "sudo chown -R docker /home/docker/update && ./run-update.sh"
+    volumes:
+      - ./:/home/docker/update
+
+networks:
+  default:
+    name: safex-big-box

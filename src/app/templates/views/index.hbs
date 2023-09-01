@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {{>head}}
+</head>
+
+<body id="body-pd" class="bg-light">
+
+    {{>menu}}
+
+    <!--Container Main start-->
+    <div class="height-100 bg-light">
+
+        <div class="row">
+            <div class="col">
+                <h4 id="head_page_title">MARKET</h4>
+                <hr>
+                {{>store}}
+            </div>
+        </div>
+
+
+        <div aria-live="polite" aria-atomic="true" class="position-relative">
+            <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container" style="z-index: 100;">
+            </div>
+        </div>
+
+       {{>modals}}
+
+
+        <hr>
+        <div class="container py-1 px-0 float-md-start">
+            <div id="alert_area"></div>
+            
+            
+            {{>market}}
+            {{>dashboard}}
+            {{>purchases}}
+            {{>listings}}
+            {{>orders}}
+            {{>wallets}}
+            {{>logs}}
+            {{>settings}}
+
+        </div>
+
+
+
+
+    </div>
+    <!--Container Main end-->
+
+   
+
+    
+
+
+    {{>scripts}}
+
+    <script src="/js/bundle.js"></script>
+
+    
+</body>
+
+</html>
