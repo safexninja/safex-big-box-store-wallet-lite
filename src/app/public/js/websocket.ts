@@ -13,6 +13,9 @@ import { stringify } from 'querystring'
 import { InterestInfo } from 'safex-nodejs-libwallet'
 import * as staking from '../../../common/constants/staking'
 import { ErrorRequestHandler } from 'express'
+import { getUserSettings } from './apicalls'
+import { explorerAddress } from './index'
+import { log } from 'console'
 
 export enum WsConnectionState {
     INITIATED = "INITIATED",
@@ -67,11 +70,9 @@ export interface WsInterestInfo {
     blockHeight: string
 }
 
-
-
 function createWebSocketPath(path: string): string {
     var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:';
-    return protocolPrefix + '//' + location.host + path
+    return protocolPrefix + '//localhost:3102' + path
 }
 
 
@@ -534,20 +535,20 @@ export class WalletWsConnectionHandler {
 
     private displayCashSend(message: WorkerCashSendMessage){
         setTimeout(()=>{
-            showToast("Safex Cash Send!", `<b>${message.data.amount} SFX</b> has been sent to<br><br> ${message.data.address}<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX), <br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
+            showToast("Safex Cash Send!", `<b>${message.data.amount} SFX</b> has been sent to<br><br> ${message.data.address}<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX), <br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
         }, 2500)
     }
 
     private displayTokenSend(message: WorkerTokenSendMessage){
         setTimeout(()=>{
-            showToast("Safex Token Send!", `<b>${message.data.amount} SFT</b> has been sent to<br><br> ${message.data.address}<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
+            showToast("Safex Token Send!", `<b>${message.data.amount} SFT</b> has been sent to<br><br> ${message.data.address}<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
         }, 2500)
         
     }
 
     private displayAccountCreated(message: WorkerAccountCreated){
         setTimeout(()=>{
-            showToast("Safex Account Created!", `Account "<b>${message.data.account}</b>" creation was succesfully sent to the blockchain.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
+            showToast("Safex Account Created!", `Account "<b>${message.data.account}</b>" creation was succesfully sent to the blockchain.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
         }, 2500) 
     }
 
@@ -559,7 +560,7 @@ export class WalletWsConnectionHandler {
 
     private displayAccountEdited(message: WorkerAccountEdited){
         setTimeout(()=>{
-            showToast("Safex Account Edited!", `Account "<b>${message.data.account}</b>" edit was succesfully send to the blockchain. Please refresh your wallet page after the transaction has been confirmed.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
+            showToast("Safex Account Edited!", `Account "<b>${message.data.account}</b>" edit was succesfully send to the blockchain. Please refresh your wallet page after the transaction has been confirmed.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
         }, 2500)
     }
 
@@ -571,37 +572,37 @@ export class WalletWsConnectionHandler {
 
     private displayOfferCreated(message: WorkerOfferCreated){
         setTimeout(()=>{
-            showToast("Offer Created!", `Offer "<b>${message.data.offer_title}</b>" creation was succesfully sent to the blockchain. After confirmation the offer will be visible in your listings.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
+            showToast("Offer Created!", `Offer "<b>${message.data.offer_title}</b>" creation was succesfully sent to the blockchain. After confirmation the offer will be visible in your listings.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
         }, 2500)
     }
 
     private displayOfferEdited(message: WorkerOfferEdited){
         setTimeout(()=>{
-            showToast("Offer Edited!", `Changes to offer "<b>${message.data.offer_title}</b>" was succesfully sent to the blockchain. After confirmation the changes will be reflected in your listings.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
+            showToast("Offer Edited!", `Changes to offer "<b>${message.data.offer_title}</b>" was succesfully sent to the blockchain. After confirmation the changes will be reflected in your listings.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
         }, 2500)
     }
 
     private displayOfferPurchased(message: WorkerOfferPurchased){
         setTimeout(()=>{
-            showToast("Offer Purchased!", `Purchase of offer "<b>${message.data.offer_id}</b>" with quantity ${message.data.quantity} was succesfully sent to the blockchain.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
+            showToast("Offer Purchased!", `Purchase of offer "<b>${message.data.offer_id}</b>" with quantity ${message.data.quantity} was succesfully sent to the blockchain.<br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
         }, 2500)
     }
 
     private displayFeedbackGiven(message: WorkerFeedbackGiven){
         setTimeout(()=>{
-            showToast("Feedback GIven!", `Your feedback for offer "<b>${message.data.offer_id}</b>"  was succesfully sent to the blockchain. <br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
+            showToast("Feedback GIven!", `Your feedback for offer "<b>${message.data.offer_id}</b>"  was succesfully sent to the blockchain. <br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 30000)
         }, 2500)     
     }
     
     private displayTokensStaked(message: WorkerTokensStaked){
         setTimeout(()=>{
-            showToast("Tokens Staked!", `Staking of "<b>${message.data.amount}</b>" Safex Tokens was succesfully sent to the blockchain. <br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 20000)
+            showToast("Tokens Staked!", `Staking of "<b>${message.data.amount}</b>" Safex Tokens was succesfully sent to the blockchain. <br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 20000)
         }, 2500)     
     }
 
     private displayTokensUnstaked(message: WorkerTokensUnStaked){
         setTimeout(()=>{
-            showToast("Tokens Unstaked!", `Unstaking of "<b>${message.data.amount}</b>" Safex Tokens was succesfully sent to the blockchain. <br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 20000)
+            showToast("Tokens Unstaked!", `Unstaking of "<b>${message.data.amount}</b>" Safex Tokens was succesfully sent to the blockchain. <br><br> (fee: ${toNormalUnits(parseInt(message.data.fee))} SFX),<br><br> txn: <a href="${explorerAddress}/tx/${message.data.txn_id}" target="_blank">${message.data.txn_id}</a>`, 20000)
         }, 2500)     
     }
 

@@ -28,6 +28,7 @@ export const CONFIG = {
     WalletInactiveTimeout: process.env.WALLET_INTACTIVE_TIMEOUT || configuration.walletInactiveTimeout,
     Port: process.env.PORT || configuration.port,
     DbName: process.env.DB_NAME || configuration.dbName,
+    DbPath: process.env.DB_PATH || "",
     HashedMasterPassword: ""
 };
 

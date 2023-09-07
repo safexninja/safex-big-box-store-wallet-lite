@@ -2,8 +2,8 @@
     "network": "mainnet",
     "daemonAddress": "http://rpc.safex.org",
     "daemonPort": 17402,
-    "port": 3001,
-    "dbName": "safexbigbox"
+    "port": 3101,
+    "dbName": "bigbox.db"
     
 }
 

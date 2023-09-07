@@ -1,18 +1,28 @@
 import { SellerRegistration } from './models/models';
 import { ISellerRegistration } from './models/interfaces';
+import { getDb } from './connection';
 
 export async function addRegistration(registration: ISellerRegistration): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         try {
-            const sellerRegistration = new SellerRegistration(registration)
-
-            sellerRegistration.save(function (error: any) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
+            getDb().prepare(`INSERT INTO sellerRegistration (
+                uuid,
+                user,
+                url,
+                account,
+                token,
+                revokeToken,
+                timestamp
+            ) VALUES (
+                '${registration.uuid}',
+                '${registration.user}',
+                '${registration.url}',
+                '${registration.account}',
+                '${registration.token}',
+                '${registration.revokeToken}',
+                ${registration.timestamp}
+            )`).run()
+            resolve()
         } catch (err) {
             reject(err);
         }
@@ -22,13 +32,8 @@ export async function addRegistration(registration: ISellerRegistration): Promis
 export async function findRegistationByURLAndAccount(url: string, user: string, account: string): Promise<ISellerRegistration> {
     return new Promise<ISellerRegistration>((resolve, reject) => {
         try {
-            SellerRegistration.findOne({url, user, account}, function (error: Error, api: ISellerRegistration) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(api)
-                }
-            });
+            const res = getDb().prepare(`SELECT * FROM sellerRegistration WHERE url='${url}' AND user='${user}' AND account='${account}'`).get() as ISellerRegistration
+            resolve(res)
         } catch (err) {
             reject(err);
         }
@@ -36,66 +41,39 @@ export async function findRegistationByURLAndAccount(url: string, user: string, 
 };
 
 export async function findRegistationsByUser(user: string): Promise<ISellerRegistration[]> {
+
     return new Promise<ISellerRegistration[]>((resolve, reject) => {
         try {
-            SellerRegistration.find({user}, function (error: Error, api: ISellerRegistration[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(api)
-                }
-            });
+            const res = getDb().prepare(`SELECT * FROM sellerRegistration WHERE user='${user}'`).all() as ISellerRegistration[]
+            resolve(res)
         } catch (err) {
             reject(err);
         }
     });
+
 };
 
 export async function findRegistationsByUserAndAccount(user: string, account: string): Promise<ISellerRegistration[]> {
     return new Promise<ISellerRegistration[]>((resolve, reject) => {
         try {
-            SellerRegistration.find({user, account}, function (error: Error, api: ISellerRegistration[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(api)
-                }
-            });
+            const res = getDb().prepare(`SELECT * FROM sellerRegistration WHERE user='${user}' AND account='${account}'`).all() as ISellerRegistration[]
+            resolve(res)
         } catch (err) {
             reject(err);
         }
     });
+
 };
 
-export async function deleteRegistration(url: string, user: string, account: string): Promise<any> { 
-    return new Promise<any>((resolve, reject) => {
-      try {
-        SellerRegistration.deleteOne({ url, user, account }, function (error: Error, result: any) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
-          }
-        });
-      } catch (err) {
-        reject(err);
-      }
-    });
-  }
+export async function deleteRegistration(url: string, user: string, account: string): Promise<boolean> { 
 
-// NOT USED BY THE APP - FOR TESTING PURPOSES
-export async function findAllRegistrations(): Promise<ISellerRegistration[]> {
-    return new Promise<ISellerRegistration[]>((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
         try {
-            SellerRegistration.find(function (error: Error, user: ISellerRegistration[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(user);
-                }
-            });
+            getDb().prepare(`DELETE FROM sellerRegistration WHERE url='${url}' AND user='${user}' AND account='${account}'`).run()
+            resolve(true)
         } catch (err) {
-            reject(err);
+            reject(false);
         }
     });
-};
+
+  }

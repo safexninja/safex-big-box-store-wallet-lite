@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import * as http from 'http';
 import cookieParser from 'cookie-parser'
 import { v4 as uuidv4 } from 'uuid';
+import path from "path";
 
 import { CONFIG} from './config'
 const safex = require('safex-nodejs-libwallet');
@@ -18,7 +19,7 @@ import  * as orderDb from '../common/db/orders';
 import  * as messageDb from '../common/db/messages';
 import  * as historyDb from '../common/db/history';
 import  * as errorLogDb from '../common/db/errorlogs';
-import { connectDb } from '../common/db/connection';
+import { connectDb, disconnectDb } from '../common/db/connection';
 import { AuthLogin, OrderClose, OrderCloseCommunication, OrderGetMessages, OrderReply, OrderShipped, OrderValidation, PurchaseAdd, PurchaseClose, PurchaseCloseCommunication, PurchaseConfirmDelivery, PurchaseGetMessages, PurchaseRate, PurchaseReply, SetStore, StoreOfferAdd, StoreOfferRemove, StoreOfferReport, StoreOffersDetails, StoreSellerCheck, StoreSellerRegister, StoreSellerRevoke, UserCreate, UserSettings, UserUpdateInfo, UserUpdatePassword, WalletHistory, WalletUpdateDeleted, WalletUpdateInfo } from './requests/ApiRequestData';
 import * as crypto from '../common/crypto/crypto'
 
@@ -63,7 +64,7 @@ app.use(cookieParser())
 
 const server = http.createServer(app);
 
-const daemon: DaemonRpc = new DaemonRpc(CONFIG.DaemonAddress, CONFIG.DaemonPort)
+let daemon: DaemonRpc = new DaemonRpc(CONFIG.DaemonAddress, CONFIG.DaemonPort)
 
 type storeFrontFetchMessageEntry = {
     url: string,
@@ -105,6 +106,16 @@ app.post('/api/user/create', async (req:  Request, res: Response) => {
                 logsLastSeen: Date.now(),
                 passwordHashed: true
             })
+
+            await userSettingsDb.addSettings({
+                uuid: uuidv4(),
+                user: uuid,
+                defaultCountry: 'US',
+                defaultAddress: 'none',
+                daemonAddress: CONFIG.Network == 'mainnet' ? 'http://rpc.safex.org' : 'http://localhost',
+                explorerAddress: 'https://explore.safex.org'
+            }, CONFIG.HashedMasterPassword)
+
             res.status(201).send({name: requestData.name, uuid: uuid} );
         } catch (error) {
             log(LogLevel.ERROR, "Error when add using to database: " + error)
@@ -136,11 +147,15 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
                         accounts: await accountDb.findAccountsIdByUserUUID(user.uuid),
                         wallets: await walletDb.findWalletsIdByUserUUID(user.uuid)
                     }
-                    
+
+                    const userSettings = await userSettingsDb.findSettingsByUserUUID(tokenData.uuid, CONFIG.HashedMasterPassword)
+
+                    daemon = new DaemonRpc(userSettings.daemonAddress, CONFIG.DaemonPort)
+                    log(LogLevel.MESSAGE, "Setting daemon URL to: " + userSettings.daemonAddress)
+
                     const jwtToken = generateJwt(tokenData)
 
-                    res
-                    .cookie("access_token", jwtToken, {
+                    res.cookie("access_token", jwtToken, {
                         httpOnly: false,
                         secure: true,
                       })
@@ -207,6 +222,7 @@ app.get('/api/auth/refresh', authenticateJwt, async (req: Request, res: Response
 
 })
 
+
 app.post('/api/user/update', authenticateJwt, async (req:  Request, res: Response) => {
 
     let apiRequestValidation: ApiRequestValidation = validateMessage(req.body, new UserUpdateInfo())
@@ -249,10 +265,12 @@ app.post('/api/user/settings', authenticateJwt, async (req:  Request, res: Respo
                     uuid: uuidv4(),
                     user: authenticatedUser.uuid,
                     defaultCountry: requestData.defaultCountry,
-                    defaultAddress: requestData.defaultAddress
+                    defaultAddress: requestData.defaultAddress,
+                    daemonAddress: requestData.daemonAddress,
+                    explorerAddress: requestData.explorerAddress
                 }, CONFIG.HashedMasterPassword)
             } else {
-                await userSettingsDb.updateUserSettings(authenticatedUser.uuid, {defaultCountry: requestData.defaultCountry, defaultAddress: requestData.defaultAddress}, CONFIG.HashedMasterPassword)
+                await userSettingsDb.updateUserSettings(authenticatedUser.uuid, {uuid: existingSettings.uuid, user: existingSettings.user, defaultCountry: requestData.defaultCountry, defaultAddress: requestData.defaultAddress, daemonAddress: requestData.daemonAddress, explorerAddress: requestData.explorerAddress}, CONFIG.HashedMasterPassword)
             }
         }
         res.status(200).send({status: "OK"})
@@ -325,9 +343,9 @@ app.get('/api/user/settings', authenticateJwt, async (req:  Request, res: Respon
         if(authenticatedUser){
             const settings = await userSettingsDb.findSettingsByUserUUID(authenticatedUser.uuid, CONFIG.HashedMasterPassword)
             if(settings && settings.defaultCountry && settings.defaultAddress){
-                res.status(200).send({defaultCountry: settings.defaultCountry, defaultAddress: settings.defaultAddress})  
+                res.status(200).send({defaultCountry: settings.defaultCountry, defaultAddress: settings.defaultAddress, daemonAddress: settings.daemonAddress, explorerAddress: settings.explorerAddress})  
             } else {
-                res.status(200).send({defaultCountry: "none", defaultAddress: "none"})  
+                res.status(200).send({defaultCountry: "none", defaultAddress: "none", daemonAddress: settings.daemonAddress, explorerAddress: settings.explorerAddress})  
             }
         }
     } catch (error){
@@ -704,7 +722,7 @@ app.post('/api/store/set', authenticateJwt, async (req:  Request, res: Response)
                         timestamp: Date.now(),
                         user: authenticatedUser.uuid, 
                         uuid: uuidv4(),
-                        message: `You connected to store front '${requestData.url}' for the first time`
+                        message: `You connected to store front "${requestData.url}" for the first time`
                     })
                 } catch (err) {
                     log(LogLevel.ERROR, err)
@@ -890,7 +908,7 @@ app.post('/api/store/seller/register', authenticateJwt, async (req:  Request, re
                             timestamp: Date.now(),
                             user: authenticatedUser.uuid,
                             uuid: uuidv4(),
-                            message: `You submitted your seller registration for account '${requestData.account}' on store front ${activeStoreFrontApi.url}`
+                            message: `You submitted your seller registration for account "${requestData.account}" on store front ${activeStoreFrontApi.url}`
                         })
 
 
@@ -912,7 +930,7 @@ app.post('/api/store/seller/register', authenticateJwt, async (req:  Request, re
                     timestamp: Date.now(),
                     user: authenticatedUser.uuid,
                     uuid: uuidv4(),
-                    message: `Your submitted registration for account '${requestData.account}' was not correctly processed by store front ${activeStoreFrontApi.url}`
+                    message: `Your submitted registration for account "${requestData.account}" was not correctly processed by store front ${activeStoreFrontApi.url}`
                 })
                 res.status(500).send({error: "Registration not correctly processed by store"})
                 return
@@ -963,7 +981,7 @@ app.post('/api/store/seller/revoke', authenticateJwt, async (req:  Request, res:
                             timestamp: Date.now(),
                             user: authenticatedUser.uuid,
                             uuid: uuidv4(),
-                            message: `Your revoked your registration for account '${requestData.account}' on store front ${activeStoreFrontApi.url}`
+                            message: `Your revoked your registration for account "${requestData.account}" on store front ${activeStoreFrontApi.url}`
                         })
                         res.status(200).send({status: "OK"})
                         return
@@ -980,7 +998,7 @@ app.post('/api/store/seller/revoke', authenticateJwt, async (req:  Request, res:
                     timestamp: Date.now(),
                     user: authenticatedUser.uuid,
                     uuid: uuidv4(),
-                    message: `Your revokation for account '${requestData.account}' was not correctly processed by store front ${activeStoreFrontApi.url}`
+                    message: `Your revokation for account "${requestData.account}" was not correctly processed by store front ${activeStoreFrontApi.url}`
                 })
                 res.status(500).send({error: "Revoke of registration not correctly processed by store"})
                 return
@@ -1040,7 +1058,7 @@ app.post('/api/store/seller/revoke/all', authenticateJwt, async (req:  Request, 
                             timestamp: Date.now(),
                             user: authenticatedUser.uuid,
                             uuid: uuidv4(),
-                            message: `You deleted account ${requestData.account} from a wallet, but this account is still used in ${accountToRemove.length -1} other wallet(s). The seller registration to this store was NOT revoked: ${registration.url}`
+                            message: `You deleted account "${requestData.account}" from a wallet, but this account is still used in ${accountToRemove.length -1} other wallet(s). The seller registration to this store was NOT revoked: ${registration.url}`
                         })
                     }                    
 
@@ -1052,7 +1070,7 @@ app.post('/api/store/seller/revoke/all', authenticateJwt, async (req:  Request, 
                         timestamp: Date.now(),
                         user: authenticatedUser.uuid,
                         uuid: uuidv4(),
-                        message: `Something went wrong while revoking all seller registrations for removed account ${requestData.account} with error ${error}`
+                        message: `Something went wrong while revoking all seller registrations for removed account "${requestData.account}" with error ${error}`
                     })
 
                     log(LogLevel.ERROR, "Error when revoking all seller registrations for account: " + requestData.account)
@@ -1574,7 +1592,7 @@ app.post('/api/purchases/process', authenticateJwt, async (req:  Request, res: R
                 timestamp: Date.now(),
                 user: authenticatedUser.uuid,
                 uuid: uuidv4(),
-                message: `Something went wrong while processing your purchase of offer '${requestData.offerId}' on txn '${requestData.txn}' from seller '${requestData.seller}': ${error}`
+                message: `Something went wrong while processing your purchase of offer "${requestData.offerId}" on txn "${requestData.txn}" from seller "${requestData.seller}": ${error}`
             })
         }
         res.status(500).send({error: "Something went wrong while processing purchase or messaging the seller: " + error})
@@ -2464,6 +2482,7 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
                                 let decryptedMessageData = decryptedMessage.data as Message_OpenCommunication
                                 
                                 const existingOrder = await orderDb.findOrderByOfferAndTxn(authenticatedUser.uuid, message.offerId, message.txnId)
+                                
                                 if(existingOrder){
                                     await errorLogDb.addErrorLogEntry({
                                         component: ErrorLogComponent.API,
@@ -2471,7 +2490,7 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
                                         user: authenticatedUser.uuid,
                                         uuid: uuidv4(),
                                         timestamp: Date.now(),
-                                        message: `You recieved a order message for an order that is already in the database with offer id '${message.offerId}' and txnId '${message.txnId}'. This might indicate someone tried to fake a purchase based on an existing transaction. This message was ignored and did result in a new order`
+                                        message: `You recieved a order message for an order that is already in the database with offer id "${message.offerId}" and txnId "${message.txnId}". This might indicate someone tried to fake a purchase based on an existing transaction. This message was ignored and did result in a new order`
                                     })
                                 } else {
 
@@ -2480,6 +2499,7 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
                                     //find used seller registration based on store front api URL and offer id
                                     const allOfferRegistrations = await sellerRegistrationOffersDb.findAllOfferRegistrations()
                                     let usedSellerRegistration: ISellerRegistration | undefined
+                                    
 
                                     sellerRegistrations.forEach(sellerRegistration => {
                                         const sellersOfferRegistrations = allOfferRegistrations.filter(offerRegistration => offerRegistration.sellerRegistrationUuid == sellerRegistration.uuid)
@@ -2493,7 +2513,7 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
                                     const offers: DaemonOffers = await daemon.getOffersFromSeller(usedSellerRegistration?.account || "")
                                     const purchasedOffer = offers.offers?.find(offer=>offer.offer_id == message.offerId) 
                                     const signatureIsValid = crypto.verifySignature(receivedMessage.encryptedMessage, message.signature, decryptedPubkey)
-
+                                    
                                     if(purchasedOffer && usedSellerRegistration){
                                         
                                         await orderDb.addOrder({
@@ -2515,6 +2535,7 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
                                             orderStatus: OrderStatus.NEW
                                         })
 
+                                        
                                         await messageDb.addMessage({
                                             uuid: message.uuid,
                                             messageType: MessageType.OPEN_COMMUNICATION,
@@ -2532,6 +2553,8 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
                                             deleteToken: decryptedMessageData.deleteToken
                                         }, CONFIG.HashedMasterPassword)
 
+                                        log(LogLevel.ERROR, "after add message of order")
+
                                     } else {
 
                                         try{
@@ -2541,7 +2564,7 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
                                                 timestamp: Date.now(),
                                                 user: authenticatedUser.uuid,
                                                 uuid: uuidv4(),
-                                                message: `You have received an order from store '${storeFrontApi.url}' for a seller registration that does not match. Could not create order. Please reach out to the customer. OfferID: ${message.offerId}, Txn: ${message.txnId}, 
+                                                message: `You have received an order from store "${storeFrontApi.url}" for a seller registration that does not match. Could not create order. Please reach out to the customer. OfferID: ${message.offerId}, Txn: ${message.txnId}, 
                                                         [delivery address:] ${decryptedMessageData.deliveryAddress},
                                                         [additional message:] ${decryptedMessageData.additionalMessage}.
                                                         [email:] ${decryptedMessageData.emailAddress},
@@ -2759,7 +2782,7 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
                                 timestamp: Date.now(),
                                 user: authenticatedUser.uuid,
                                 uuid: uuidv4(),
-                                message: `Something went wrong while parsing message from store '${storeFrontApi.url}': ${error}`
+                                message: `Something went wrong while parsing message from store "${storeFrontApi.url}": ${error}`
                             })
 
                         }
@@ -3232,39 +3255,28 @@ server.listen(CONFIG.Port, () => {
     log(LogLevel.MESSAGE, `API server running on ${CONFIG.Network} is up on port ${CONFIG.Port}`)
 })
 
-// async function connectToDatabase() {
-//     try {
-//         await connectDb(CONFIG.DbHost, CONFIG.DbName, CONFIG.DbUser, CONFIG.DbPassword, CONFIG.DbPort)
+async function connectToDatabase() {
+    try {
+        connectDb(path.join(CONFIG.DbPath, CONFIG.DbName))
 
-//     } catch (error) {
-//         log(LogLevel.ERROR, `Can not connect to database on host ${CONFIG.DbHost}, database ${CONFIG.DbName} with user ${CONFIG.DbUser} and provid password`)
+    } catch (error) {
+        log(LogLevel.ERROR, `Can not connect to database on path ${CONFIG.DbPath}, database ${CONFIG.DbName}`)
 
-//         var figlet = require('figlet');
-//         figlet('NO DATABASE CONNECTION ...', function(err: any, data:any) {
-//             if (err) {
-//                 console.dir(err);
-//                 return;
-//             }
-//             // do not delete, this is useful output to the console
-//             console.log(data)
-//         });
+        var figlet = require('figlet');
+        figlet('NO DATABASE CONNECTION ...', function(err: any, data:any) {
+            if (err) {
+                console.dir(err);
+                return;
+            }
+            // do not delete, this is useful output to the console
+            console.log(data)
+        });
 
-//         figlet('WRONG PASSWORD ?', function(err: any, data:any) {
-//             if (err) {
-//                 console.dir(err);
-//                 return;
-//             }
-//              // do not delete, this is useful output to the console
-//             console.log(data)
-//         });
-
-//         setTimeout(()=>{
-//             process.exit(1);
-//         }, 3000)
-        
-//     }
-    
-// }
+        setTimeout(()=>{
+            process.exit(1);
+        }, 3000)
+    }
+}
 
 async function enrichOpenPurchasesAndOrders(){
     log(LogLevel.INFO, "Enriching purchases and order now: " + convertTimestampToDate(Date.now()))
@@ -3415,12 +3427,13 @@ async function enrichOpenPurchasesAndOrders(){
 
 setInterval(enrichOpenPurchasesAndOrders, 60000)
 
-// connectToDatabase()
+connectToDatabase()
 
 
 
 function shutdown() {
-    log(LogLevel.WARN, "Shutting down API server...")
+    disconnectDb()
+    log(LogLevel.MESSAGE, "Shutting down API server...")
     server.close();
   }
   

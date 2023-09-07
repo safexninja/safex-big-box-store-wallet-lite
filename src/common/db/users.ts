@@ -1,19 +1,31 @@
 import { UpdateWriteOpResult } from 'mongoose';
 import { User } from './models/models';
 import { IUser, IUserStrict } from './models/interfaces';
+import { getDb } from './connection';
 
 export async function addUser(user: IUser): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         try {
-            const newUser = new User(user)
-
-            newUser.save(function (error: any) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
+            getDb().prepare(`INSERT INTO user (
+                uuid,
+                name,
+                password,
+                description,
+                status,
+                termsAccepted,
+                logsLastSeen,
+                passwordHashed
+            ) VALUES (
+                '${user.uuid}',
+                '${user.name}',
+                '${user.password}',
+                '${user.description}',
+                '${user.status}',
+                ${user.termsAccepted},
+                ${user.logsLastSeen},
+                ${user.passwordHashed}
+            )`).run()
+            resolve()
         } catch (err) {
             reject(err);
         }
@@ -23,25 +35,8 @@ export async function addUser(user: IUser): Promise<void> {
 export async function findUserByUUID(uuid: string): Promise<IUserStrict> {
     return new Promise<IUserStrict>((resolve, reject) => {
         try {
-            User.findOne({uuid}, function (error: Error, user: IUser) {
-                if (error) {
-                    reject(error);
-                } else {
-                    if(user == null){
-                        resolve(user);
-                    } else {
-                        resolve(
-                            {
-                                uuid: user.uuid,
-                                name: user.name,
-                                status: user.status,
-                                termsAccepted: user.termsAccepted,
-                                logsLastSeen: user.logsLastSeen
-                            }
-                        )
-                    }
-                }
-            });
+            const user = getDb().prepare(`SELECT * FROM userStrict WHERE uuid='${uuid}'`).get() as IUserStrict
+            resolve(user)
         } catch (err) {
             reject(err);
         }
@@ -49,127 +44,80 @@ export async function findUserByUUID(uuid: string): Promise<IUserStrict> {
 };
 
 export async function findUserByName(name: string): Promise<IUserStrict> {
-    return new Promise<IUserStrict>((resolve, reject) => {
-        try {
-            User.findOne({name}, function (error: Error, user: IUser) {
-                if (error) {
-                    reject(error);
-                } else {
-                    if(user == null){
-                        resolve(user);
-                    } else {
-                        resolve(
-                            {
-                                uuid: user.uuid,
-                                name: user.name,
-                                status: user.status,
-                                termsAccepted: user.termsAccepted,
-                                logsLastSeen: user.logsLastSeen
-                            }
-                        )
-                    }
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+        return new Promise<IUserStrict>((resolve, reject) => {
+            try {
+                const user= getDb().prepare(`SELECT * FROM userStrict WHERE name='${name}'`).get() as IUserStrict
+                resolve(user)
+            } catch (err) {
+                reject(err);
+            }
+        });
 };
 
 export async function findUserWithPasswordByName(name: string): Promise<IUser> {
     return new Promise<IUser>((resolve, reject) => {
         try {
-            User.findOne({name}, function (error: Error, user: IUser) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(user)
-                }
-            });
+            const user = getDb().prepare(`SELECT * FROM user WHERE name='${name}'`).get() as IUser
+            resolve(user)
         } catch (err) {
             reject(err);
         }
     });
 };
 
-export async function updateUserInfo(uuid: string, description: string): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
+export async function updateUserInfo(uuid: string, description: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
         try {
-            User.updateOne({uuid}, {description}, function (error: Error, result: UpdateWriteOpResult) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
+            getDb().prepare(`UPDATE user SET description='${description}' WHERE uuid='${uuid}'`).run()
+            resolve(true)
         } catch (err) {
-            reject(err);
+            reject(false);
         }
     });
 };
 
-export async function updateUserLogsLastSeen(uuid: string, logsLastSeen: number): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
+export async function updateUserLogsLastSeen(uuid: string, logsLastSeen: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
         try {
-            User.updateOne({uuid}, {logsLastSeen}, function (error: Error, result: UpdateWriteOpResult) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
+            getDb().prepare(`UPDATE user SET logsLastSeen=${logsLastSeen} WHERE uuid='${uuid}'`).run()
+            resolve(true)
         } catch (err) {
-            reject(err);
+            reject(false);
         }
     });
 };
 
-export async function updateUserTermsAccepted(uuid: string, termsAccepted: boolean): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
+export async function updateUserTermsAccepted(uuid: string, termsAccepted: boolean): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
         try {
-            User.updateOne({uuid}, {termsAccepted}, function (error: Error, result: UpdateWriteOpResult) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
+            getDb().prepare(`UPDATE user SET termsAccepted=${termsAccepted} WHERE uuid='${uuid}'`).run()
+            resolve(true)
         } catch (err) {
-            reject(err);
+            reject(false);
         }
     });
 };
 
 
-export async function updateUserPassword(uuid: string, password: string): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
+export async function updateUserPassword(uuid: string, password: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
         try {
-            User.updateOne({uuid}, {password}, function (error: Error, result: UpdateWriteOpResult) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
+            getDb().prepare(`UPDATE user SET password='${password}' WHERE uuid='${uuid}'`).run()
+            resolve(true)
         } catch (err) {
-            reject(err);
+            reject(false);
         }
     });
 };
 
-export async function deleteUser(uuid: string): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      try {
-        User.deleteOne({ uuid }, function (error: Error, result: any) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
-          }
-        });
-      } catch (err) {
-        reject(err);
-      }
+export async function deleteUser(uuid: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+        try {
+            getDb().prepare(`DELETE FROM user WHERE uuid='${uuid}'`).run()
+            resolve(true)
+        } catch (err) {
+            reject(false);
+        }
     });
   }
 
@@ -177,13 +125,8 @@ export async function deleteUser(uuid: string): Promise<any> {
 export async function findAllUsers(): Promise<IUser[]> {
     return new Promise<IUser[]>((resolve, reject) => {
         try {
-            User.find(function (error: Error, user: IUser[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(user);
-                }
-            });
+            const result = getDb().prepare('SELECT * FROM user').all() as IUser[]
+            resolve(result)
         } catch (err) {
             reject(err);
         }
@@ -193,13 +136,8 @@ export async function findAllUsers(): Promise<IUser[]> {
 export async function getUserCount(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
         try {
-            User.find(function (error: Error, users: typeof User) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(users.length);
-                }
-            });
+            const count = getDb().prepare(`SELECT COUNT(uuid) FROM user`).get() as number
+            resolve(count)
         } catch (err) {
             reject(err);
         }

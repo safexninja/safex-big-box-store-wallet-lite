@@ -1,4 +1,4 @@
-import { ChildProcessByStdio, spawn}  from 'child_process'
+import { ChildProcess, ChildProcessByStdio, fork, spawn}  from 'child_process'
 import { EventEmitter, Readable, Writable } from 'stream';
 import { BroadcastChannel } from 'broadcast-channel';
 
@@ -8,7 +8,7 @@ export class Worker {
     private broadCastChannelId: string;
     private base64Data: string;
     private workerPort: EventEmitter;
-    private workerProcess: ChildProcessByStdio<Writable, Readable, Readable>;
+    private workerProcess: ChildProcess
     private channel: BroadcastChannel
 
     constructor(
@@ -20,7 +20,7 @@ export class Worker {
         this.scriptParameters = scriptParameters
         this.base64Data = base64Data
         this.workerPort = new EventEmitter()
-        this.workerProcess = spawn('node', [this.scriptParameters, this.broadCastChannelId, this.base64Data], {detached: true}) 
+        this.workerProcess = fork(this.scriptParameters, [this.broadCastChannelId, this.base64Data], {detached: true}) 
 
         this.workerProcess.on('close',(data: any): void =>{
             this.workerPort.emit('close', data)

@@ -9,7 +9,6 @@ import { ParentPort } from  '../Worker'
 import { WsRequestMessage } from '../../websocket/WsRequestMessage'
 import { WsRequestMessageData_CheckTxProof, WsRequestMessageData_CreateAccount, WsRequestMessageData_CreateOffer, WsRequestMessageData_CreateWalletFromKeys, WsRequestMessageData_EditAccount, WsRequestMessageData_EditOffer, WsRequestMessageData_GiveFeedback, WsRequestMessageData_OpenWallet, WsRequestMessageData_PurchaseOffer, WsRequestMessageData_RecoverAccount, WsRequestMessageData_RemoveAccount, WsRequestMessageData_SendCash, WsRequestMessageData_SendToken, WsRequestMessageData_StakeTokens, WsRequestMessageData_UnStakeTokens } from '../../websocket/WsRequestMessageData';
 import { SafexAccount, Transaction, TransactionInfo } from 'safex-nodejs-libwallet'
-import * as database from '../../../common/db/connection'
 import { DaemonRpc } from '../../../common/daemon/DaemonRpc';
 import  * as walletDb from '../../../common/db/wallets';
 import  * as accountDb from '../../../common/db/accounts';
@@ -30,6 +29,7 @@ import { IAccount, IWallet } from '../../../common/db/models/interfaces';
 import { decodeJwt } from '../../../common/auth/authJwt';
 import { SensibleTxnType } from '../../../common/enums/txns';
 import { ErrorLogComponent, ErrorLogSeverity } from '../../../common/db/enums/errorlog';
+import { connectDb, disconnectDb } from '../../../common/db/connection';
 
 const daemon: DaemonRpc = new DaemonRpc(CONFIG.DaemonAddress, CONFIG.DaemonPort)
 
@@ -837,7 +837,7 @@ async function closeWallet(){
         try {
             activeWallet.status = WalletWorkerStatus.CLOSING
             await storeWallet()
-            database.disconnectDb()
+            disconnectDb()
             let msg: WorkerReponseMessage = {type: WsResponseType.WALLET_CLOSED, data: { uuid: activeWallet.uuid }}
             parentPort.postMessage(msg);
             parentPort.postMessage('terminate signal')
@@ -1132,6 +1132,7 @@ async function handleOpenWallet(err:any, openWallet: any) {
         console.log(JSON.stringify(err as Error))
         handleWalletError(err, "WWS00 - Wallet returned and arror")
         setTimeout(()=>{
+            disconnectDb()
             parentPort.postMessage('terminate signal')
         }, 2000)
         return
@@ -1238,7 +1239,7 @@ async function handleOpenWallet(err:any, openWallet: any) {
 
 async function init() {
     try {
-        // await database.connectDb(CONFIG.DbHost, CONFIG.DbName, CONFIG.DbUser, CONFIG.DbPassword, CONFIG.DbPort)
+        connectDb(path.join(CONFIG.DbPath, CONFIG.DbName))
         let connectionMsg: WorkerReponseMessage = {type: WsResponseType.CONNECTED, data: { status: "ready"}}
         parentPort.postMessage(connectionMsg)
     } catch (error) {

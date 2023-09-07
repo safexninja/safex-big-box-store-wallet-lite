@@ -1,6 +1,6 @@
 
 
-import { getOpenOrders, OpenOrder, getClosedOrders, ClosedOrder, getWallets, setOrderValidation } from './apicalls'
+import { getOpenOrders, OpenOrder, getClosedOrders, ClosedOrder, getWallets, setOrderValidation, getUserSettings } from './apicalls'
 import { convertTimestampToDate } from '../../../common/utils/dates'
 import { PollUntil } from 'poll-until-promise'
 import { WalletWsConnectionHandler, websocketConnectionManager, WsCheckTxnProofState, WsConnectionState } from './websocket'
@@ -9,6 +9,7 @@ import { showMessageAndManageModal } from './managing'
 import { TxnStatus } from '../../../common/enums/txns'
 import { OrderStatus } from '../../../common/enums/orders'
 import * as bootstrap from 'bootstrap'
+import { explorerAddress } from './index'
 
 
 const containerNewOrders = document.getElementById('container_new_orders') as HTMLDivElement
@@ -187,7 +188,7 @@ function createCard (order: OpenOrder, styles: OrderCardStyle){
 
                 card.push(`<div class="col">`)
                     card.push(`<div class="row"><span class="text-nowrap"><b>Offer Id: </b>${order.offerId}</span></div>`)
-                    card.push(`<div class="row"><span class="text-nowrap"><b>Txn: </b><a href="/tx/${order.txn}" target="_blank">${order.txn}</a></span></div>`)
+                    card.push(`<div class="row"><span class="text-nowrap"><b>Txn: </b><a href="${explorerAddress}/tx/${order.txn}" target="_blank">${order.txn}</a></span></div>`)
                     let orderDateTime = ""
                     try{
                         if(order.timestamp){
@@ -273,7 +274,7 @@ function createClosedCard (order: ClosedOrder, styles: OrderCardStyle){
 
                 card.push(`<div class="col">`)
                     card.push(`<div class="row"><span class="text-nowrap"><b>Offer Id:</b> ${order.offerId}</span></div>`)
-                    card.push(`<div class="row"><span class="text-nowrap"><b>Txn:</b> <a href="/tx/${order.txn}" target="_blank">${order.txn}</a></span></div>`)
+                    card.push(`<div class="row"><span class="text-nowrap"><b>Txn:</b> <a href="${explorerAddress}/tx/${order.txn}" target="_blank">${order.txn}</a></span></div>`)
                     card.push(`<div class="row"><span class="text-nowrap"><b>Received:</b> ${convertTimestampToDate( order.timestamp)}</span></div>`)
                 
                 card.push(`</div>`)

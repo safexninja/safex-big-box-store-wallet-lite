@@ -1,6 +1,6 @@
 
 
-import { getOpenPurchases, getClosedPurchases, OpenPurchase, ClosedPurchase, purchaseRate, getDaemonHeight } from './apicalls'
+import { getOpenPurchases, getClosedPurchases, OpenPurchase, ClosedPurchase, purchaseRate, getDaemonHeight, getUserSettings } from './apicalls'
 import { convertTimestampToDate } from '../../../common/utils/dates'
 import { showMessageAndManageModal } from './managing'
 import { newLineToBreak, removeHTML } from './utils'
@@ -9,6 +9,7 @@ import * as bootstrap from 'bootstrap'
 import { clearAllBackDrops, confirmationModal, ratePurchaseModal } from './modals'
 import { PollUntil } from 'poll-until-promise'
 import { WalletWsConnectionHandler, websocketConnectionManager, WsConnectionState } from './websocket'
+import { explorerAddress } from './index'
 
 
 const containerOpenPurchases = document.getElementById('container_open_purchases') as HTMLDivElement
@@ -138,7 +139,7 @@ function createCard (purchase: OpenPurchase, styles: PurchaseCardStyle){
 
                 card.push(`<div class="col">`)
                     card.push(`<div class="row"><span class="text-nowrap"><b>Offer Id:</b> ${purchase.offerId}</span></div>`)
-                    card.push(`<div class="row"><span class="text-nowrap"><b>Txn:</b> <a href="/tx/${purchase.txn}" target="_blank">${purchase.txn}</a></span></div>`)
+                    card.push(`<div class="row"><span class="text-nowrap"><b>Txn:</b> <a href="${explorerAddress}/tx/${purchase.txn}" target="_blank">${purchase.txn}</a></span></div>`)
 
                     let purchaseDateTime = ""
                     try {
@@ -230,7 +231,7 @@ function createClosedCard (purchase: ClosedPurchase, styles: PurchaseCardStyle){
 
                 card.push(`<div class="col">`)
                     card.push(`<div class="row"><span class="text-nowrap"><b>Offer Id: </b>${purchase.offerId}</span></div>`)
-                    card.push(`<div class="row"><span class="text-nowrap"><b>Txn: </b><a href="/tx/${purchase.txn}" target="_blank">${purchase.txn}</a></span></div>`)
+                    card.push(`<div class="row"><span class="text-nowrap"><b>Txn: </b><a href="${explorerAddress}/tx/${purchase.txn}" target="_blank">${purchase.txn}</a></span></div>`)
                     card.push(`<div class="row"><span class="text-nowrap"><b>Purchased: </b>${convertTimestampToDate( purchase.timestamp)}</span></div>`)
                 
                 card.push(`</div>`)

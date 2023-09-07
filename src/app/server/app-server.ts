@@ -67,7 +67,7 @@ server.listen(CONFIG.Port, () => {
 
 
 function shutdown() {
-    log(LogLevel.WARN, "Shutting down APP server...")
+    log(LogLevel.MESSAGE, "Shutting down APP server...")
     server.close();
   }
   

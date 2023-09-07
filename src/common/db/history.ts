@@ -1,17 +1,39 @@
 import { TxnHistory } from './models/models';
 import { ITxnHistory } from './models/interfaces';
+import { getDb } from './connection';
+
 
 export async function addTxn(txnHistory: ITxnHistory): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         try {
-            const txn = new TxnHistory(txnHistory)
-            txn.save(function (error: any) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
+            getDb().prepare(`INSERT INTO txnHistory (
+                wallet,
+                timestamp,
+                txnId,
+                paymentId,
+                direction,
+                pending,
+                type,
+                cashAmount,
+                tokenAmount,
+                fee,
+                blockHeight,
+                confirmations
+            ) VALUES (
+                '${txnHistory.wallet}',
+                ${txnHistory.timestamp},
+                '${txnHistory.txnId}',
+                '${txnHistory.paymentId}',
+                '${txnHistory.direction}',
+                ${txnHistory.pending},
+                '${txnHistory.type}',
+                ${txnHistory.cashAmount},
+                ${txnHistory.tokenAmount},
+                ${txnHistory.fee},
+                ${txnHistory.blockHeight},
+                ${txnHistory.confirmations}
+            )`).run()
+            resolve()
         } catch (err) {
             reject(err);
         }
@@ -21,50 +43,21 @@ export async function addTxn(txnHistory: ITxnHistory): Promise<void> {
 export async function findHistoryByWallet(wallet: string): Promise<ITxnHistory[]> {
     return new Promise<ITxnHistory[]>((resolve, reject) => {
         try {
-            TxnHistory.find({wallet}, function (error: Error, history: ITxnHistory[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                        resolve(history)                    
-                }
-            });
+            const res = getDb().prepare(`SELECT * FROM txnHistory WHERE wallet='${wallet}'`).all() as ITxnHistory[]
+            resolve(res)
         } catch (err) {
             reject(err);
         }
     });
 };
 
-// NOT USED BY THE APP - FOR TESTING PURPOSES
-export async function findAllTxns(): Promise<ITxnHistory[]> {
-    return new Promise<ITxnHistory[]>((resolve, reject) => {
+export async function deleteHistoryByWallet(wallet: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
         try {
-            TxnHistory.find(function (error: Error, history: ITxnHistory[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(history);
-                }
-            });
+            getDb().prepare(`DELETE FROM txnHistory WHERE wallet='${wallet}'`).run()
+            resolve(true)
         } catch (err) {
-            reject(err);
-        }
-    });
-};
-
-
-
-export async function deleteHistoryByWallet(wallet: string): Promise<ITxnHistory[]> {
-    return new Promise<ITxnHistory[]>((resolve, reject) => {
-        try {
-            TxnHistory.deleteMany({wallet}, function (error: Error, history: ITxnHistory[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                        resolve(history)                    
-                }
-            });
-        } catch (err) {
-            reject(err);
+            reject(false);
         }
     });
 };

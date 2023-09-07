@@ -2,7 +2,7 @@
     "network": "stagenet",
     "daemonAddress": "http://localhost",
     "daemonPort": 30393,
-    "port": 3001,
-    "dbName": "safexbigbox"
+    "port": 3101,
+    "dbName": "bigbox.db"
 }
 

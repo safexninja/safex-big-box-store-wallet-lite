@@ -4,120 +4,133 @@ import { UpdateWriteOpResult } from 'mongoose';
 import { CommunicationStatus } from '../enums/communication';
 import { OrderStatus } from '../enums/orders';
 import { TxnStatus } from '../enums/txns';
+import { NULL_VALUE, getDb } from './connection';
 
 export async function addOrder(order: IOrder): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        try {
-            const newOrder = new Order(order)
-            newOrder.save(function (error: any) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+  return new Promise<void>((resolve, reject) => {
+    try {
+        getDb().prepare(`INSERT INTO orders (
+            uuid,
+            user,
+            sellerRegistration,
+            title,
+            account,
+            timestamp,
+            offerId,
+            address,
+            txn,
+            txnProofSignature,
+            txnProofSignatureValid,
+            txnStatus,
+            blockHeight,
+            blockTimestamp,
+            blockConfirmations,
+            quantity,
+            price,
+            receivedCash,
+            messageAddress,
+            messagePubkey,
+            communicationStatus,
+            hasNewMessages,
+            orderStatus
+        ) VALUES (
+            '${order.uuid}',
+            '${order.user}',
+            '${order.sellerRegistration}',
+            '${order.title}',
+            '${order.account}',
+            ${order.timestamp},
+            '${order.offerId}',
+            '${order.address}',
+            '${order.txn}',
+            '${order.txnProofSignature}',
+            ${order.txnProofSignatureValid || NULL_VALUE},
+            '${order.txnStatus}',
+            '${order.blockHeight || NULL_VALUE}',
+            ${order.blockTimestamp || NULL_VALUE},
+            ${order.blockConfirmations || NULL_VALUE},
+            ${order.quantity || NULL_VALUE},
+            ${order.price || NULL_VALUE},
+            ${order.receivedCash || NULL_VALUE},
+            '${order.messageAddress}',
+            '${order.messagePubkey}',
+            '${order.communicationStatus}',
+            ${order.hasNewMessages},
+            '${order.orderStatus}'
+        )`).run()
+        resolve()
+    } catch (err) {
+        reject(err);
+    }
+});
 };
 
 export async function findOrderByUUID(user: string, uuid: string): Promise<IOrder> {
     return new Promise<IOrder>((resolve, reject) => {
-        try {
-            Order.findOne({uuid, user}, function (error: Error, order: IOrder) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(order)
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
+      try {
+          const res = getDb().prepare(`SELECT * FROM orders WHERE user='${user}' AND uuid='${uuid}'`).get() as IOrder
+          resolve(res)
+      } catch (err) {
+          reject(err);
+      }
     });
 };
 
 export async function findOrderByOfferAndTxn(user: string, offerId: string, txn: string): Promise<IOrder> {
   return new Promise<IOrder>((resolve, reject) => {
-      try {
-          Order.findOne({user, offerId, txn}, function (error: Error, order: IOrder) {
-              if (error) {
-                  reject(error);
-              } else {
-                  resolve(order)
-              }
-          });
-      } catch (err) {
-          reject(err);
-      }
+    try {
+        const res = getDb().prepare(`SELECT * FROM orders WHERE user='${user}' AND offerId='${offerId}' AND txn='${txn}'`).get() as IOrder
+        resolve(res)
+    } catch (err) {
+        reject(err);
+    }
   });
 };
 
 export async function findOrdersByUser(user: string): Promise<IOrder[]> {
-    return new Promise<IOrder[]>((resolve, reject) => {
-        try {
-            Order.find({user}, function (error: Error, order: IOrder[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(order)
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+  return new Promise<IOrder[]>((resolve, reject) => {
+    try {
+        const res = getDb().prepare(`SELECT * FROM orders WHERE user='${user}'`).all() as IOrder[]
+        resolve(res)
+    } catch (err) {
+        reject(err);
+    }
+  });
 };
 
 export async function findOrdersByUserAndCommunicationStatus(user: string, communicationStatus: CommunicationStatus): Promise<IOrder[]> {
-    return new Promise<IOrder[]>((resolve, reject) => {
-        try {
-            Order.find({user, communicationStatus}, function (error: Error, order: IOrder[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(order)
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+  return new Promise<IOrder[]>((resolve, reject) => {
+    try {
+        const res = getDb().prepare(`SELECT * FROM orders WHERE user='${user}' AND communicationStatus='${communicationStatus}'`).all() as IOrder[]
+        resolve(res)
+    } catch (err) {
+        reject(err);
+    }
+  });
 };
 
 
 export async function findOrdersByUserAndStatus(user: string, orderStatus: OrderStatus): Promise<IOrder[]> {
   return new Promise<IOrder[]>((resolve, reject) => {
-      try {
-          Order.find({user, orderStatus}, function (error: Error, order: IOrder[]) {
-              if (error) {
-                  reject(error);
-              } else {
-                  resolve(order)
-              }
-          });
-      } catch (err) {
-          reject(err);
-      }
+    try {
+        const res = getDb().prepare(`SELECT * FROM orders WHERE user='${user}' AND orderStatus='${orderStatus}'`).all() as IOrder[]
+        resolve(res)
+    } catch (err) {
+        reject(err);
+    }
   });
 };
 
-// NOT USED BY THE APP - FOR TESTING PURPOSES
+
 export async function findAllOrders(): Promise<IOrder[]> {
-    return new Promise<IOrder[]>((resolve, reject) => {
-        try {
-            Order.find(function (error: Error, order: IOrder[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(order);
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+  return new Promise<IOrder[]>((resolve, reject) => {
+    try {
+        const res = getDb().prepare(`SELECT * FROM orders`).all() as IOrder[]
+        resolve(res)
+    } catch (err) {
+        reject(err);
+    }
+  });
 };
 
 
@@ -129,137 +142,96 @@ export async function updateOrderConfirmation(
     quantity: number,
     price: number,
     txnStatus: TxnStatus
-  ): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
+  ): Promise<boolean> {
+
+    return new Promise<boolean>((resolve, reject) => {
       try {
-        Order.updateOne(
-          { uuid },
-          { blockHeight, blockTimestamp, blockConfirmations, quantity, price, txnStatus },
-          function (error: Error, result: UpdateWriteOpResult) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
+          getDb().prepare(`UPDATE orders 
+          SET blockHeight=${blockHeight},
+          blockTimestamp=${blockTimestamp},
+          blockConfirmations=${blockConfirmations},
+          quantity=${quantity},
+          price=${price},
+          txnStatus='${txnStatus}'
+          WHERE uuid='${uuid}'`).run()
+          resolve(true)
       } catch (err) {
-        reject(err);
+          reject(false);
       }
-    });
+  });
+
   }
 
 
 
-  export async function updateOrderTxnProofSignatureValid(
-    uuid: string,
-    receivedCash: number,
-    txnProofSignatureValid: boolean,
-  ): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
-      try {
-        Order.updateOne(
-          { uuid },
-          { receivedCash, txnProofSignatureValid },
-          function (error: Error, result: UpdateWriteOpResult) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
-      } catch (err) {
-        reject(err);
-      }
-    });
-  }
+export async function updateOrderTxnProofSignatureValid(
+  uuid: string,
+  receivedCash: number,
+  txnProofSignatureValid: boolean,
+): Promise<boolean> {
+
+  return new Promise<boolean>((resolve, reject) => {
+    try {
+        getDb().prepare(`UPDATE orders 
+        SET receivedCash=${receivedCash},
+        txnProofSignatureValid=${txnProofSignatureValid}
+        WHERE uuid='${uuid}'`).run()
+        resolve(true)
+    } catch (err) {
+        reject(false);
+    }
+  });
+}
 
 
 export async function updateOrderCommunicationStatus(
     uuid: string,
     communicationStatus: CommunicationStatus
-  ): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
-      try {
-        Order.updateOne(
-          { uuid },
-          { communicationStatus },
-          function (error: Error, result: UpdateWriteOpResult) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
-      } catch (err) {
-        reject(err);
-      }
-    });
+  ): Promise<boolean> {
+    
+  return new Promise<boolean>((resolve, reject) => {
+    try {
+        getDb().prepare(`UPDATE orders 
+        SET communicationStatus='${communicationStatus}'
+        WHERE uuid='${uuid}'`).run()
+        resolve(true)
+    } catch (err) {
+        reject(false);
+    }
+  });
+
   }
 
 
   export async function updateOrderStatus(
     uuid: string,
     orderStatus: OrderStatus
-  ): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
-      try {
-        Order.updateOne(
-          { uuid },
-          { orderStatus },
-          function (error: Error, result: UpdateWriteOpResult) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
-      } catch (err) {
-        reject(err);
-      }
-    });
+  ): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+    try {
+        getDb().prepare(`UPDATE orders 
+        SET orderStatus='${orderStatus}'
+        WHERE uuid='${uuid}'`).run()
+        resolve(true)
+    } catch (err) {
+        reject(false);
+    }
+  });
   }
 
 export async function updateHasNewMessages(
     uuid: string,
     hasNewMessages: boolean
 
-  ): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
+  ): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
       try {
-        Order.updateOne(
-          { uuid },
-          { hasNewMessages },
-          function (error: Error, result: UpdateWriteOpResult) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
+          getDb().prepare(`UPDATE orders 
+          SET hasNewMessages=${hasNewMessages ? 1 : 0}
+          WHERE uuid='${uuid}'`).run()
+          resolve(true)
       } catch (err) {
-        reject(err);
+          reject(false);
       }
     });
   }
-
-
-export async function getOrderCount(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-        try {
-            Order.find(function (error: Error, order: IOrder[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(order.length);
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
-};

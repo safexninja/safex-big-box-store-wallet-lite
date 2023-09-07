@@ -1,29 +1,52 @@
 import {app, BrowserWindow} from 'electron'
 import { ChildProcess, fork } from "child_process";
 import path from "path";
+import { connectDb, createTables, disconnectDb } from '../../common/db/connection';
+
+const fs = require('fs');
 // const name = 'Safex-Big-Box-Store'
 // const appName = app.getPath("exe");
 
 const userDataPath = app.getPath("userData");
+const appDataPath = path.join(userDataPath, "bigbox")
+const databasePath = path.join(appDataPath, "database")
+const walletsPath = path.join(appDataPath, "wallets")
 
 let appServerProcess: ChildProcess
 let apiServerProcess: ChildProcess
 let walletServerProcess: ChildProcess
-process.env.FILE_STORE_DIR=userDataPath
+
+process.env.FILE_STORE_DIR=walletsPath
+process.env.DB_PATH=databasePath
+console.log(userDataPath)
 
 // const expressPath = appName.endsWith(`${name}.exe`)
 //   ? path.join("./resources/app.asar", "./build/app/server/app-server.js")
 //   : "./build/app/server/app-server.js";
 
+
+const createDirIfNotExists = (dir: string) =>{
+
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+        console.log("Directory created: " + dir)
+    } else {
+        console.log("Directory already exists: " + dir)
+    }
+
+}
+createDirIfNotExists(appDataPath)
+createDirIfNotExists(databasePath)
+createDirIfNotExists(walletsPath)
  
 
 function createWindow() {
 
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-    minWidth: 1400,
-    minHeight: 800,
-    width: 1400,
+    minWidth: 1575,
+    minHeight: 950,
+    width: 1200,
     height: 800,
     webPreferences: {
         webSecurity: false
@@ -37,12 +60,13 @@ function createWindow() {
     })
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 }
 
 
 function initializeDataBase() {
-
+    connectDb(path.join(databasePath, "bigbox.db"))
+    createTables()
 }
 
 function startBackgroundServers() {
@@ -56,7 +80,7 @@ function startBackgroundServers() {
 function closeBackgroundServers(){
 
         // app server
-        const appServerShutDownRequest = new Request("http://localhost:3000/app/shutdown", {
+        const appServerShutDownRequest = new Request("http://localhost:3100/app/shutdown", {
             method: "GET",
         });
 
@@ -67,7 +91,7 @@ function closeBackgroundServers(){
         .catch()
 
         // api server
-        const apiServerShutDownRequest = new Request("http://localhost:3001/api/shutdown", {
+        const apiServerShutDownRequest = new Request("http://localhost:3101/api/shutdown", {
             method: "GET",
         });
 
@@ -78,7 +102,7 @@ function closeBackgroundServers(){
         .catch()
 
         // wallet server
-        const walletServerShutDownRequest = new Request("http://localhost:3002/ws/shutdown", {
+        const walletServerShutDownRequest = new Request("http://localhost:3102/ws/shutdown", {
             method: "GET",
         });
 
@@ -87,14 +111,16 @@ function closeBackgroundServers(){
             walletServerProcess.kill()
         })
         .catch()
+
+
 }
 
 
 
 app.whenReady().then(() => {
-
-    createWindow();
+    
     initializeDataBase();
+    createWindow();
     startBackgroundServers();
 
     app.on("activate", function () {
@@ -108,6 +134,7 @@ app.whenReady().then(() => {
 app.on('quit', ()=>{
    //TO DO
    closeBackgroundServers()
+   disconnectDb()
 })
 
 

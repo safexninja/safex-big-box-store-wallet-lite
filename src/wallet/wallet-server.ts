@@ -134,7 +134,7 @@ server.listen(CONFIG.Port, () => {
 })
 
 function shutdown() {
-    log(LogLevel.WARN, "Shutting down WALLET server...")
+    log(LogLevel.MESSAGE, "Shutting down WALLET server...")
     server.close();
   }
   

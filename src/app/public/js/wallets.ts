@@ -1,5 +1,5 @@
 
-import { getAccountInfoFromDaemon, getAccounts, getWallets, getWalletSecretKeys, refreshAuthToken, setWalletLabel, getAccountSecretKey, getDaemonHeight, getWalletHistory, HistoricalTxn, getGeneratedPaymentId, storeFrontRevokeAllSellerRegistrations, fetchMessages, getPricePegsFromDaemon } from './apicalls'
+import { getAccountInfoFromDaemon, getAccounts, getWallets, getWalletSecretKeys, refreshAuthToken, setWalletLabel, getAccountSecretKey, getDaemonHeight, getWalletHistory, HistoricalTxn, getGeneratedPaymentId, storeFrontRevokeAllSellerRegistrations, fetchMessages, getPricePegsFromDaemon, getUserSettings } from './apicalls'
 import { FormValidity, handleFormValidationAndSummarize, } from './formvalidation'
 import * as bootstrap from 'bootstrap'
 import { roundToTenDecimals, roundToTwoDecimals, toNormalUnits } from '../../../common/utils/units'
@@ -14,6 +14,7 @@ import { showToast } from './toast'
 import { cropString } from '../../../common/utils/strings'
 import { SensibleTxnType } from '../../../common/enums/txns'
 import * as staking from '../../../common/constants/staking'
+import { explorerAddress } from './index'
 
 const containerWallets = document.querySelector('#container_wallets') as HTMLElement
 
@@ -1766,10 +1767,10 @@ function renderTxnOverview(historicalTxns: HistoricalTxn[]){
             txnRowData.push(`<div class="card-body">`)
                 txnRowData.push(`<div class="row text_small">`)
                     txnRowData.push(`<div class="col-2"><b>Date/Time:</b><br>${convertTimestampToDate(txn.timestamp)}</div>`)
-                    txnRowData.push(`<div class="col-5 text-break"><b>Txn Id:</b><br><span class="text_xsmall"><a href="/tx/${txn.txnId}" target="_blank">${txn.txnId}</a></span></div>`)
+                    txnRowData.push(`<div class="col-5 text-break"><b>Txn Id:</b><br><span class="text_xsmall"><a href="${explorerAddress}/tx/${txn.txnId}" target="_blank">${txn.txnId}</a></span></div>`)
                     txnRowData.push(`<div class="col"><b>Direction:</b><br>${txn.direction}</div>`)
                     txnRowData.push(`<div class="col"><b>Type:</b><br>${txn.type}</div>`)
-                    txnRowData.push(`<div class="col"><b>Block:</b><br><a href="/block/${txn.blockHeight}" target="_blank">${txn.blockHeight}</a></div>`)
+                    txnRowData.push(`<div class="col"><b>Block:</b><br><a href="${explorerAddress}/block/${txn.blockHeight}" target="_blank">${txn.blockHeight}</a></div>`)
                     
 
                 txnRowData.push(`</div>`)

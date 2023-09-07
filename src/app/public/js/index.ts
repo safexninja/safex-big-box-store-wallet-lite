@@ -1,4 +1,4 @@
-import { fetchMessages, getDaemonInfo, getDaemonStakedTokens, getErrorLog, getLogsLastSeen, getUserName, getUserTerms, logout, refreshAuthToken, setUserTermsAccepted } from './apicalls'
+import { fetchMessages, getDaemonInfo, getDaemonStakedTokens, getErrorLog, getLogsLastSeen, getUserName, getUserSettings, getUserTerms, logout, refreshAuthToken, setUserTermsAccepted } from './apicalls'
 import * as bootstrap from 'bootstrap'
 import { roundToThreeDecimals, toNormalUnits } from '../../../common/utils/units'
 import { userTermsModal } from './modals'
@@ -7,6 +7,16 @@ import { showToast } from './toast'
 
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+export var explorerAddress: string
+
+async function getExplorerUrl(){
+    const settings = await getUserSettings()
+    if(settings && settings.explorerAddress){
+        explorerAddress = settings.explorerAddress
+    }
+}
+getExplorerUrl()
 
 async function updateHeaderBlockChainHeight(){
     const blockchainHeight = document.getElementById('bc_sync_header_height') as HTMLElement

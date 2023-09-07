@@ -1,105 +1,77 @@
 import { SellerRegistrationOffer } from './models/models';
 import { ISellerRegistrationOffer } from './models/interfaces';
+import { getDb } from './connection';
 
 export async function addOfferRegistration(offer: ISellerRegistrationOffer): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        try {
-            const offerRegistration = new SellerRegistrationOffer(offer)
-            offerRegistration.save(function (error: any) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+  return new Promise<void>((resolve, reject) => {
+    try {
+        getDb().prepare(`INSERT INTO sellerOfferRegistration (
+            uuid,
+            sellerRegistrationUuid,
+            offerUuid,
+            offerId,
+            removeToken
+        ) VALUES (
+            '${offer.uuid}',
+            '${offer.sellerRegistrationUuid}',
+            '${offer.offerUuid}',
+            '${offer.offerId}',
+            '${offer.removeToken}'
+        )`).run()
+        resolve()
+    } catch (err) {
+        reject(err);
+    }
+});
 };
 
 export async function findOfferRegistationsBySellerRegistration(sellerRegistrationUuid: string): Promise<ISellerRegistrationOffer[]> {
-    return new Promise<ISellerRegistrationOffer[]>((resolve, reject) => {
-        try {
-            SellerRegistrationOffer.find({sellerRegistrationUuid}, function (error: Error, api: ISellerRegistrationOffer[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(api)
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+
+  return new Promise<ISellerRegistrationOffer[]>((resolve, reject) => {
+    try {
+        const user = getDb().prepare(`SELECT * FROM sellerOfferRegistration WHERE sellerRegistrationUuid='${sellerRegistrationUuid}'`).all() as ISellerRegistrationOffer[]
+        resolve(user)
+    } catch (err) {
+        reject(err);
+    }
+  });
+
 };
 
 
-export async function deleteOfferRegistration(sellerRegistrationUuid: string, offerId: string): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      try {
-        SellerRegistrationOffer.deleteMany({ sellerRegistrationUuid, offerId }, function (error: Error, result: any) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
-          }
-        });
-      } catch (err) {
-        reject(err);
-      }
-    });
-  }
+export async function deleteOfferRegistration(sellerRegistrationUuid: string, offerId: string): Promise<boolean> {
 
-
-  export async function deleteOfferRegistrations(sellerRegistrationUuid: string): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      try {
-        SellerRegistrationOffer.deleteMany({ sellerRegistrationUuid }, function (error: Error, result: any) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
-          }
-        });
-      } catch (err) {
-        reject(err);
-      }
-    });
-  }
-
-
-  export async function deleteAllOfferRegistrations(): Promise<any> {
-
-      return new Promise<any>((resolve, reject) => {
-        try {
-          SellerRegistrationOffer.deleteMany({ }, function (error: Error, result: any) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          });
-        } catch (err) {
-          reject(err);
-        }
-      });
+  return new Promise<boolean>((resolve, reject) => {
+    try {
+        getDb().prepare(`DELETE FROM sellerOfferRegistration WHERE sellerRegistrationUuid='${sellerRegistrationUuid}' AND offerId='${offerId}'`).run()
+        resolve(true)
+    } catch (err) {
+        reject(false);
     }
+  });
+
+  }
 
 
-// NOT USED BY THE APP - FOR TESTING PURPOSES
-export async function findAllOfferRegistrations(): Promise<ISellerRegistrationOffer[]> {
-    return new Promise<ISellerRegistrationOffer[]>((resolve, reject) => {
-        try {
-            SellerRegistrationOffer.find(function (error: Error, user: ISellerRegistrationOffer[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(user);
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
+  export async function deleteOfferRegistrations(sellerRegistrationUuid: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      try {
+          getDb().prepare(`DELETE FROM sellerOfferRegistration WHERE sellerRegistrationUuid='${sellerRegistrationUuid}'`).run()
+          resolve(true)
+      } catch (err) {
+          reject(false);
+      }
     });
+  }
+
+
+export async function findAllOfferRegistrations(): Promise<ISellerRegistrationOffer[]> {
+  return new Promise<ISellerRegistrationOffer[]>((resolve, reject) => {
+    try {
+        const user = getDb().prepare(`SELECT * FROM sellerOfferRegistration`).all() as ISellerRegistrationOffer[]
+        resolve(user)
+    } catch (err) {
+        reject(err);
+    }
+  });
 };

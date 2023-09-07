@@ -7,6 +7,8 @@ import { convertTimestampToDate } from '../../../common/utils/dates'
 const formUserSettings = document.querySelector('#form_user_settings') as HTMLFormElement
 const selectDefaultCountry = document.querySelector('#select_default_country') as HTMLSelectElement
 const inputDefaultAddress = document.querySelector('#input_default_address') as HTMLInputElement
+const inputDaemonAddress = document.querySelector('#input_settings_daemon_address') as HTMLInputElement
+const inputExplorerAddress = document.querySelector('#input_settings_explorer_address') as HTMLInputElement
 const containerActiveRegistrations = document.getElementById('user_active_registations') as HTMLDivElement
 
 
@@ -15,7 +17,7 @@ if(formUserSettings){
     formUserSettings.addEventListener('submit', async (e) => {
         e.preventDefault()
         
-        const savedSettings = await saveUserSettings(selectDefaultCountry.value, inputDefaultAddress.value)
+        const savedSettings = await saveUserSettings(selectDefaultCountry.value, inputDefaultAddress.value, inputDaemonAddress.value, inputExplorerAddress.value)
         if(!savedSettings){
             showToast("Error", "Something went wrong while trying to save your settings", 15000)
         } else{
@@ -48,6 +50,8 @@ async function initialLoadSettings(): Promise<boolean>{
     if(settings && settings.defaultAddress){
         selectDefaultCountry.value = settings.defaultCountry
         inputDefaultAddress.value = settings.defaultAddress
+        inputDaemonAddress.value = settings.daemonAddress
+        inputExplorerAddress.value = settings.explorerAddress
     }
 
     containerActiveRegistrations.innerHTML = ""

@@ -24,6 +24,7 @@ export const CONFIG = {
     DaemonPort: process.env.DAEMON_PORT ||configuration.daemonPort,
     Port: process.env.PORT || configuration.port,
     DbName: process.env.DB_NAME || configuration.dbName,
+    DbPath: process.env.DB_PATH || "",
     HashedMasterPassword: ""
 };
 

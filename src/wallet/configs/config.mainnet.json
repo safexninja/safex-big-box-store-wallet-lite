@@ -4,7 +4,7 @@
     "daemonPort": 17402,
     "walletInactiveTimeout": 300000,
     "fileStoreDir": "/<path>",
-    "port": 3002,
-    "dbName": "safexbigbox"
+    "port": 3102,
+    "dbName": "bigbox.db"
 }
 

@@ -49,11 +49,15 @@ export class UserUpdatePassword extends ApiRequestData {
 export class UserSettings extends ApiRequestData {
     constructor(
         public defaultCountry: string = '',
-        public defaultAddress: string = ''
+        public defaultAddress: string = '',
+        public daemonAddress: string = '',
+        public explorerAddress: string = '',
     ){
         super()
         this.defaultCountry = defaultCountry;
         this.defaultAddress = defaultAddress;
+        this.daemonAddress = daemonAddress;
+        this.explorerAddress = explorerAddress;
     }
 }
 

@@ -30,6 +30,8 @@ export interface IUserSettings {
     user: string;
     defaultCountry: string;
     defaultAddress: string;
+    daemonAddress: string;
+    explorerAddress: string;
 }
 
 export interface IWallet {

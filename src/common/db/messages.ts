@@ -3,179 +3,139 @@ import { IMessage } from './models/interfaces';
 import { UpdateWriteOpResult } from 'mongoose';
 import { MessageStatus } from '../enums/messages';
 import { decryptWithHashString, encryptWithHashString } from '../crypto/crypto';
+import { getDb } from './connection';
 
 export async function addMessage(message: IMessage, encryptionHashString: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        try {
+  return new Promise<void>((resolve, reject) => {
+    try {
 
-            message.message = encryptWithHashString(message.message, encryptionHashString)
+        message.message = encryptWithHashString(message.message, encryptionHashString)
 
-            const newMessage = new Message(message)
-            newMessage.save(function (error: any) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+        getDb().prepare(`INSERT INTO message (
+            uuid,
+            messageType,
+            purchaseUuid,
+            orderUuid,
+            message,
+            signatureValid,
+            timestamp,
+            status,
+            direction,
+            deleteToken
+        ) VALUES (
+            '${message.uuid}',
+            '${message.messageType}',
+            '${message.purchaseUuid}',
+            '${message.orderUuid}',
+            '${message.message}',
+            ${message.signatureValid},
+            ${message.timestamp},
+            '${message.status}',
+            '${message.direction}',
+            '${message.deleteToken}'
+        )`).run()
+        resolve()
+    } catch (err) {
+        reject(err);
+    }
+});
+
 };
 
 export async function findMessageByUUID(uuid: string, encryptionHashString: string): Promise<IMessage> {
-    return new Promise<IMessage>((resolve, reject) => {
-        try {
-            Message.findOne({uuid}, function (error: Error, message: IMessage) {
-                if (error) {
-                    reject(error);
-                } else {
-                    message.message = decryptWithHashString(message.message, encryptionHashString)
-                    resolve(message)
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+  return new Promise<IMessage>((resolve, reject) => {
+    try {
+        const res = getDb().prepare(`SELECT * FROM message WHERE uuid='${uuid}'`).get() as IMessage
+        res.message = decryptWithHashString(res.message, encryptionHashString)
+        resolve(res)
+    } catch (err) {
+        reject(err);
+    }
+  });
+
 };
 
 export async function findMessagesByPurchase(purchaseUuid: string, encryptionHashString: string): Promise<IMessage[]> {
-    return new Promise<IMessage[]>((resolve, reject) => {
-        try {
-            Message.find({purchaseUuid}, function (error: Error, message: IMessage[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    message.forEach((mess)=>{
-                      mess.message = decryptWithHashString(mess.message, encryptionHashString)
-                    })
-                    resolve(message)
-                }
-            });
-        } catch (err) {
-            reject(err);
+  return new Promise<IMessage[]>((resolve, reject) => {
+    try {
+        const res = getDb().prepare(`SELECT * FROM message WHERE purchaseUuid='${purchaseUuid}'`).all() as IMessage[]
+        
+        for (const mess of res ){
+          mess.message = decryptWithHashString(mess.message, encryptionHashString)
         }
-    });
+                
+        resolve(res)
+    } catch (err) {
+        reject(err);
+    }
+  });
 };
 
 export async function findMessagesByOrder(orderUuid: string, encryptionHashString: string): Promise<IMessage[]> {
   return new Promise<IMessage[]>((resolve, reject) => {
-      try {
-          Message.find({orderUuid}, function (error: Error, message: IMessage[]) {
-              if (error) {
-                  reject(error);
-              } else {
-                  message.forEach((mess)=>{
-                    mess.message = decryptWithHashString(mess.message, encryptionHashString)
-                  })
-                  resolve(message)
-              }
-          });
-      } catch (err) {
-          reject(err);
-      }
+    try {
+        const res = getDb().prepare(`SELECT * FROM message WHERE orderUuid='${orderUuid}'`).all() as IMessage[]
+        
+        for (const mess of res ){
+          mess.message = decryptWithHashString(mess.message, encryptionHashString)
+        }
+                
+        resolve(res)
+    } catch (err) {
+        reject(err);
+    }
   });
 };
 
 
 
-// NOT USED BY THE APP - FOR TESTING PURPOSES
-export async function findAllMessages(): Promise<IMessage[]> {
-    return new Promise<IMessage[]>((resolve, reject) => {
-        try {
-          Message.find(function (error: Error, message: IMessage[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(message);
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
-};
-
-
 export async function updateMessageStatus(
     uuid: string,
     status: MessageStatus,
-  ): Promise<UpdateWriteOpResult> {
-    return new Promise<UpdateWriteOpResult>((resolve, reject) => {
+  ): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
       try {
-        Message.updateOne(
-          { uuid },
-          { status },
-          function (error: Error, result: UpdateWriteOpResult) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
+          getDb().prepare(`UPDATE message SET status='${status}' WHERE uuid='${uuid}'`).run()
+          resolve(true)
       } catch (err) {
-        reject(err);
+          reject(false);
       }
-    });
+  });
   }
 
 
-export async function deleteMessageFromDatabase(uuid: string): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      try {
-        Message.deleteOne(
-          { uuid },
-          function (error: Error, result: any) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
-      } catch (err) {
-        reject(err);
-      }
-    });
-  }
+export async function deleteMessageFromDatabase(uuid: string): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    try {
+        getDb().prepare(`DELETE FROM message WHERE uuid='${uuid}'`).run()
+        resolve(true)
+    } catch (err) {
+        reject(false);
+    }
+   });
+}
 
 
- export async function deleteAllMessagesFromDatabase(): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      try {
-        Message.deleteMany(
-          {  },
-          function (error: Error, result: any) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
-      } catch (err) {
-        reject(err);
-      }
-    });
+ export async function deleteAllMessagesFromDatabase(): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    try {
+        getDb().prepare(`DELETE FROM message`).run()
+        resolve(true)
+    } catch (err) {
+        reject(false);
+    }
+   });
   }
 
 
 
 export async function getMessageCount(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-        try {
-            Message.find(function (error: Error, message: IMessage[]) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(message.length);
-                }
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+  return new Promise<number>((resolve, reject) => {
+    try {
+        const count = getDb().prepare(`SELECT COUNT(uuid) FROM message`).get() as number
+        resolve(count)
+    } catch (err) {
+        reject(err);
+    }
+});
 };
