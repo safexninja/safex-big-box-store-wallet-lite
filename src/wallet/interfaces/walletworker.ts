@@ -1,4 +1,4 @@
-import { InterestInfo } from "safex-nodejs-libwallet"
+import { InterestInfo } from "safex-nodejs-wallet-lib"
 import { WsResponseType } from "../enums/walletworker"
 
 export interface WorkerConfiguration  {

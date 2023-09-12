@@ -10,7 +10,7 @@ import { convertTimestampToDate } from '../../../common/utils/dates'
 import { roundToTenDecimals, toNormalUnits } from '../../../common/utils/units'
 import { BB_OfferDescription } from '../../../common/interfaces/offerFormat'
 import { stringify } from 'querystring'
-import { InterestInfo } from 'safex-nodejs-libwallet'
+import { InterestInfo } from 'safex-nodejs-wallet-lib'
 import * as staking from '../../../common/constants/staking'
 import { ErrorRequestHandler } from 'express'
 import { getUserSettings } from './apicalls'
@@ -72,7 +72,7 @@ export interface WsInterestInfo {
 
 function createWebSocketPath(path: string): string {
     var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:';
-    return protocolPrefix + '//localhost:3102' + path
+    return protocolPrefix + '//localhost:3150' + path
 }
 
 

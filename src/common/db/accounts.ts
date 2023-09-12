@@ -85,7 +85,6 @@ export async function findAccountsIdByUserUUID(userUuid: string): Promise<IAccou
     return new Promise<IAccountId[]>((resolve, reject) => {
         try {
             const acc = getDb().prepare(`SELECT * FROM accountId WHERE user='${userUuid}'`).all() as IAccountId[]
-            console.log(acc)
             resolve(acc)
         } catch (err) {
             reject(err);

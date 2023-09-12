@@ -1,4 +1,4 @@
-const safex = require('safex-nodejs-libwallet');
+const safex = require('safex-nodejs-wallet-lib');
 import * as path from 'path'
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs'
@@ -8,7 +8,7 @@ import { CONFIG } from '../../config'
 import { ParentPort } from  '../Worker'
 import { WsRequestMessage } from '../../websocket/WsRequestMessage'
 import { WsRequestMessageData_CheckTxProof, WsRequestMessageData_CreateAccount, WsRequestMessageData_CreateOffer, WsRequestMessageData_CreateWalletFromKeys, WsRequestMessageData_EditAccount, WsRequestMessageData_EditOffer, WsRequestMessageData_GiveFeedback, WsRequestMessageData_OpenWallet, WsRequestMessageData_PurchaseOffer, WsRequestMessageData_RecoverAccount, WsRequestMessageData_RemoveAccount, WsRequestMessageData_SendCash, WsRequestMessageData_SendToken, WsRequestMessageData_StakeTokens, WsRequestMessageData_UnStakeTokens } from '../../websocket/WsRequestMessageData';
-import { SafexAccount, Transaction, TransactionInfo } from 'safex-nodejs-libwallet'
+import { SafexAccount, Transaction, TransactionInfo } from 'safex-nodejs-wallet-lib'
 import { DaemonRpc } from '../../../common/daemon/DaemonRpc';
 import  * as walletDb from '../../../common/db/wallets';
 import  * as accountDb from '../../../common/db/accounts';

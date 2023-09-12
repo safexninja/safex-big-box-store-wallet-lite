@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import path from "path";
 
 import { CONFIG} from './config'
-const safex = require('safex-nodejs-libwallet');
+const safex = require('safex-nodejs-wallet-lib');
 
 import  * as walletDb from '../common/db/wallets';
 import  * as accountDb from '../common/db/accounts';
@@ -112,7 +112,7 @@ app.post('/api/user/create', async (req:  Request, res: Response) => {
                 user: uuid,
                 defaultCountry: 'US',
                 defaultAddress: 'none',
-                daemonAddress: CONFIG.Network == 'mainnet' ? 'http://rpc.safex.org' : 'http://localhost',
+                daemonAddress: CONFIG.Network == 'mainnet' ? 'http://rpc.safex.org' : 'http://stagenet.safex.ninja',
                 explorerAddress: 'https://explore.safex.org'
             }, CONFIG.HashedMasterPassword)
 

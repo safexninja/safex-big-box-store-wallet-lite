@@ -1,4 +1,4 @@
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, ForkOptions} from 'electron'
 import { ChildProcess, fork } from "child_process";
 import path from "path";
 import { connectDb, createTables, disconnectDb } from '../../common/db/connection';
@@ -71,7 +71,7 @@ function initializeDataBase() {
 
 function startBackgroundServers() {
 
-    appServerProcess = fork(path.join(__dirname, '../server/app-server.js'), {detached: true})
+    appServerProcess = fork(path.join(__dirname, '../server/app-server.js'), {detached: true })
     apiServerProcess = fork(path.join(__dirname, '../../api/api-server.js'), {detached: true})
     walletServerProcess = fork(path.join(__dirname, '../../wallet/wallet-server.js'), {detached: true})
 
@@ -102,7 +102,7 @@ function closeBackgroundServers(){
         .catch()
 
         // wallet server
-        const walletServerShutDownRequest = new Request("http://localhost:3102/ws/shutdown", {
+        const walletServerShutDownRequest = new Request("http://localhost:3150/ws/shutdown", {
             method: "GET",
         });
 

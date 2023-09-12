@@ -12,7 +12,9 @@
     "starte": "npm run build && electron build/app/electron/electron.js",
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "author": "Safex.Ninja",
   "license": "ISC",
@@ -29,6 +31,7 @@
     "cors": "2.8.5",
     "data-manipulator": "1.2.4",
     "dateformat": "4.5.0",
+    "electron-log": "4.4.8",
     "electron-squirrel-startup": "^1.0.0",
     "express": "4.17.1",
     "figlet": "1.5.2",
@@ -44,7 +47,8 @@
     "request": "2.88.2",
     "source-map-loader": "4.0.1",
     "uuid": "9.0.0",
-    "ws": "8.11.0"
+    "ws": "8.11.0",
+    "safex-nodejs-wallet-lib": "0.2.0"     
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.4.1",
@@ -64,12 +68,17 @@
     "@types/mongoose": "5.11.97",
     "@types/uuid": "9.0.0",
     "@types/ws": "8.5.3",
-    "electron": "^26.1.0",
+    "electron": "26.1.0",
     "nodemon": "2.0.4",
     "shx": "0.3.4",
     "ts-loader": "9.4.2",
     "typescript": "4.9.3",
     "webpack": "5.75.0",
     "webpack-cli": "5.0.1"
+  },
+  "build": {
+    "appId": "com.electron.BIGBOXWALLET",
+    "npmRebuild": true,
+    "extends": null
   }
 }

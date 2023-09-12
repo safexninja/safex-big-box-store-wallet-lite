@@ -2,7 +2,11 @@ module.exports = {
   packagerConfig: {
     asar: true,
   },
-  rebuildConfig: {},
+
+  rebuildConfig: {
+    
+  },
+
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
@@ -15,11 +19,13 @@ module.exports = {
     {
       name: '@electron-forge/maker-deb',
       config: {
-        options: {
+        options: {   
+          depends: ["libssl1.1"],     
           maintainer: 'Safex Ninja',
-          homepage: 'https://safex.ninja'
-        }
-          
+          homepage: 'https://safex.ninja',
+  
+        },
+                
       },
     },
   
