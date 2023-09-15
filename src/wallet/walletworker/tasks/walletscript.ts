@@ -14,7 +14,7 @@ import  * as walletDb from '../../../common/db/wallets';
 import  * as accountDb from '../../../common/db/accounts';
 import  * as historyDb from '../../../common/db/history';
 import  * as errorLogDb from '../../../common/db/errorlogs';
-
+import  * as userSettingsDb from '../../../common/db/userSettings';
 // utils
 import * as fileUtils from '../../../common/utils/file-utils'
 import * as passwordGenerator from 'generate-password'
@@ -31,7 +31,7 @@ import { SensibleTxnType } from '../../../common/enums/txns';
 import { ErrorLogComponent, ErrorLogSeverity } from '../../../common/db/enums/errorlog';
 import { connectDb, disconnectDb } from '../../../common/db/connection';
 
-const daemon: DaemonRpc = new DaemonRpc(CONFIG.DaemonAddress, CONFIG.DaemonPort)
+let daemon: DaemonRpc = new DaemonRpc(CONFIG.DaemonAddress, CONFIG.DaemonPort)
 
 type ActiveWallet = {
     status: WalletWorkerStatus,
@@ -782,7 +782,7 @@ async function openWallet(data: WsRequestMessageData_OpenWallet) {
                 'path': activeWallet.path,
                 'password': activeWallet.password,
                 'network': CONFIG.Network,
-                'daemonAddress': `${CONFIG.DaemonAddress}:${CONFIG.DaemonPort}`
+                'daemonAddress': daemon.getUrl()
             }
         
             try {
@@ -795,7 +795,7 @@ async function openWallet(data: WsRequestMessageData_OpenWallet) {
                         'path': activeWallet.path,
                         'password': activeWallet.password,
                         'network': CONFIG.Network,
-                        'daemonAddress': `${CONFIG.DaemonAddress}:${CONFIG.DaemonPort}`,
+                        'daemonAddress': daemon.getUrl(),
                         'restoreHeight': 0,
                         'addressString': existingWallet.address,
                         'viewKeyString': existingWallet.viewKey,
@@ -862,7 +862,7 @@ async function createWallet(){
             'path': activeWallet.path,
             'password': activeWallet.password,
             'network': CONFIG.Network,
-            'daemonAddress': `${CONFIG.DaemonAddress}:${CONFIG.DaemonPort}`   
+            'daemonAddress': daemon.getUrl()   
         }
         
         try {
@@ -892,7 +892,7 @@ async function createWalletFromKeys(data: WsRequestMessageData_CreateWalletFromK
             'path': activeWallet.path,
             'password': activeWallet.password,
             'network': CONFIG.Network,
-            'daemonAddress': `${CONFIG.DaemonAddress}:${CONFIG.DaemonPort}`,
+            'daemonAddress': daemon.getUrl(),
             'restoreHeight': 0,
             'addressString': data.address,
             'viewKeyString': data.viewKey,
@@ -1242,6 +1242,12 @@ async function init() {
         connectDb(path.join(CONFIG.DbPath, CONFIG.DbName))
         let connectionMsg: WorkerReponseMessage = {type: WsResponseType.CONNECTED, data: { status: "ready"}}
         parentPort.postMessage(connectionMsg)
+        
+        if(authenticatedUser){
+            const userSettings = await userSettingsDb.findSettingsByUserUUID(authenticatedUser.uuid, CONFIG.HashedMasterPassword)
+            daemon.setAddress(userSettings.daemonAddress)
+        }
+    
     } catch (error) {
         let errorMsg: WorkerErrorMessage = {type: WsResponseType.ERROR, data: { error: "DATABASE ERROR", message: "WWS19 -Could not connect to database"}}
         parentPort.postMessage(errorMsg)

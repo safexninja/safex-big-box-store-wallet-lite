@@ -19,7 +19,7 @@ let walletServerProcess: ChildProcess
 process.env.FILE_STORE_DIR=walletsPath
 process.env.DB_PATH=databasePath
 console.log(userDataPath)
-
+console.log('database: ' + databasePath)
 // const expressPath = appName.endsWith(`${name}.exe`)
 //   ? path.join("./resources/app.asar", "./build/app/server/app-server.js")
 //   : "./build/app/server/app-server.js";

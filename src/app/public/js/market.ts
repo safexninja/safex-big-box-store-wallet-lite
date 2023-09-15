@@ -865,26 +865,26 @@ async function openOffer(offerId: string, seller: string) {
             
             if(isValidImageUrl(mainImage)){
                 carousel.push(`<div class="carousel-item active">`)
-                    carousel.push(`<img src="${mainImage}" class="d-block w-100" loading="lazy">`)
+                    carousel.push(`<img src="${mainImage}" class="d-block w-100">`)
                 carousel.push(`</div>`)
             }
            
         
             if(image1 && image1.length > 0 && isValidImageUrl(image1)){
-                carousel.push(`<div class="carousel-item ">`)
-                    carousel.push(`<img src="${image1}" class="d-block w-100" loading="lazy">`)
+                carousel.push(`<div class="carousel-item">`)
+                    carousel.push(`<img src="${image1}" class="d-block w-100">`)
                 carousel.push(`</div>`)
             }
 
             if(image2 && image2.length > 0 && isValidImageUrl(image2)){
-                carousel.push(`<div class="carousel-item ">`)
-                    carousel.push(`<img src="${image2}" class="d-block w-100" loading="lazy">`)
+                carousel.push(`<div class="carousel-item">`)
+                    carousel.push(`<img src="${image2}" class="d-block w-100">`)
                 carousel.push(`</div>`)
             }
 
             if(image3 && image3.length > 0 && isValidImageUrl(image3)){
-                carousel.push(`<div class="carousel-item ">`)
-                    carousel.push(`<img src="${image3}" class="d-block w-100" loading="lazy">`)
+                carousel.push(`<div class="carousel-item">`)
+                    carousel.push(`<img src="${image3}" class="d-block w-100">`)
                 carousel.push(`</div>`)
             }           
 

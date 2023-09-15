@@ -150,7 +150,7 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
 
                     const userSettings = await userSettingsDb.findSettingsByUserUUID(tokenData.uuid, CONFIG.HashedMasterPassword)
 
-                    daemon = new DaemonRpc(userSettings.daemonAddress, CONFIG.DaemonPort)
+                    daemon.setAddress(userSettings.daemonAddress)
                     log(LogLevel.MESSAGE, "Setting daemon URL to: " + userSettings.daemonAddress)
 
                     const jwtToken = generateJwt(tokenData)
@@ -1169,6 +1169,7 @@ app.get('/api/store/offers', authenticateJwt, async (req:  Request, res: Respons
                 maxPrice,
                 minQy,
                 SortOrder[req.query.order as keyof typeof SortOrder] || SortOrder.NEWEST,
+                daemon
             )
 
             res.status(200).send(filteredAndOrderedOffers) 

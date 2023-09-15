@@ -4,6 +4,8 @@ import { getEvaluatedPrice } from "../../common/helpers/offers";
 import { TWM_OfferDescription, BB_OfferDescription } from "../../common/interfaces/offerFormat";
 import { toNormalUnits } from "../../common/utils/units";
 import { CONFIG } from "../config";
+import  * as userSettingsDb from '../../common/db/userSettings';
+
 const { DM } = require("data-manipulator");
 
 const MAX_RETRIEVABLE_OFFERS = 1000
@@ -26,10 +28,10 @@ export async function filterAndOrderOffers(
     minPrice: number | undefined, 
     maxPrice: number | undefined, 
     minQy: number | undefined,
-    sortOrder: SortOrder
+    sortOrder: SortOrder,
+    daemon: DaemonRpc
     ): Promise<DaemonOffer[]> {
 
-        const daemon: DaemonRpc = new DaemonRpc(CONFIG.DaemonAddress, CONFIG.DaemonPort)
         const currentBlockHeight = (await daemon.getHeight()).height || 0
         const pricePegs = (await daemon.getPricePegs()).price_pegs
 

@@ -5,19 +5,26 @@
   "productDescription": "Lite stand alone version of the Safex Big Box Store wallet, without local daemon and block explorer",
   "main": "build/app/electron/electron.js",
   "scripts": {
-    "build": "shx rm -fR ./build && npx tsc && webpack && shx cp -r ./src/app/public/styles ./build/app/public/ && shx cp ./src/app/public/loader.html ./build/app/public/ && shx cp -r ./src/app/templates ./build/app/templates/",
-    "wallet-server": "node build/wallet/wallet-server.js",
-    "api-server": "node build/api/api-server.js",
-    "app-server": "node build/app/server/app-server.js",
-    "starte": "npm run build && electron build/app/electron/electron.js",
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "libwallet-installer": "cd node_modules/safex-nodejs-wallet-lib && ./install.sh",
+    "build": "shx rm -fR ./build && npx tsc && webpack && shx cp -r ./src/app/public/icons ./build/app/public/ && shx cp -r ./src/app/public/styles ./build/app/public/ && shx cp ./src/app/public/loader.html ./build/app/public/ && shx cp -r ./src/app/templates ./build/app/templates/",
+    "dist": "build",
+    "make-linux-installer": "npm run build && electron-builder build -l",
+    "make-win-installer": "npm run build && electron-builder build -w --x64",
+    "start": "electron ."
   },
-  "author": "Safex.Ninja",
-  "license": "ISC",
+  "author": {
+    "name": "Safex.Ninja",
+    "email": "info@safex.ninja",
+    "url:": "https://www.safex.ninja"
+
+  },
+  "maintainers": [
+    {
+      "name": "Safex Ninja",
+      "email": "info@safex.ninja",
+      "url": "https://github.com/safexninja"
+    }
+  ],
   "dependencies": {
     "@types/node": "18.11.10",
     "axios": "0.19.2",
@@ -31,8 +38,6 @@
     "cors": "2.8.5",
     "data-manipulator": "1.2.4",
     "dateformat": "4.5.0",
-    "electron-log": "4.4.8",
-    "electron-squirrel-startup": "^1.0.0",
     "express": "4.17.1",
     "figlet": "1.5.2",
     "generate-password": "1.7.0",
@@ -48,16 +53,11 @@
     "source-map-loader": "4.0.1",
     "uuid": "9.0.0",
     "ws": "8.11.0",
-    "safex-nodejs-wallet-lib": "0.2.0"     
+    "electron-log": "4.4.8",
+    "safex-nodejs-wallet-lib": "git+https://github.com/safexninja/safex-nodejs-libwallet.git"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.4.1",
-    "@electron-forge/maker-deb": "^6.4.1",
-    "@electron-forge/maker-rpm": "^6.4.1",
-    "@electron-forge/maker-squirrel": "^6.4.1",
-    "@electron-forge/maker-zip": "^6.4.1",
-    "@electron-forge/plugin-auto-unpack-natives": "^6.4.1",
-    "@types/better-sqlite3": "^7.6.4",
+    "@types/better-sqlite3": "7.6.4",
     "@types/bootstrap": "5.2.6",
     "@types/cookie-parser": "1.4.3",
     "@types/cors": "2.8.13",
@@ -69,6 +69,12 @@
     "@types/uuid": "9.0.0",
     "@types/ws": "8.5.3",
     "electron": "26.1.0",
+    "electron-builder": "24.6.4",
+    "electron-installer-dmg": "4.0.0",
+    "electron-packager": "17.1.2",
+    "electron-rebuild": "3.2.9",
+    "electron-squirrel-startup": "1.0.0",
+    "electron-winstaller": "5.1.0",
     "nodemon": "2.0.4",
     "shx": "0.3.4",
     "ts-loader": "9.4.2",
@@ -77,8 +83,36 @@
     "webpack-cli": "5.0.1"
   },
   "build": {
-    "appId": "com.electron.BIGBOXWALLET",
+    "appId": "com.electron.SAFEXBIGBOXSTOREWALLET",
     "npmRebuild": true,
-    "extends": null
+    "nodeGypRebuild": true,
+    "extends": null,
+    "files": [
+      "build/**/*",
+      "!node_modules/safex-nodejs-libwallet/boost*",
+      "!node_modules/safex-nodejs-libwallet/safexcore",
+      "!node_modules/safex-nodejs-libwallet/deps",
+      "!node_modules/safex-nodejs-libwallet/build"
+    ],
+    "mac": {
+      "category": "public.app-category.business",
+      "icon": "app/public/icons/icon.png",
+      "type": "distribution",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "app/public/icons/icon.png"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "zip"
+      ],
+      "category": "Utility",
+      "icon": "app/public/icons/icon.png"
+    }
   }
 }

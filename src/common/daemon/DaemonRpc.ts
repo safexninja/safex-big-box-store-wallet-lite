@@ -10,8 +10,16 @@ export class DaemonRpc {
   constructor(private addres: string, private port: number) {
     this.addres = addres;
     this.port = port;
-
     this.baseUrl = `${addres}:${port}`;
+  }
+
+  public getUrl(): string{
+    return this.baseUrl;
+  }
+
+  public setAddress(address: string): void{
+    this.addres = address
+    this.baseUrl = `${address}:${this.port}`;
   }
 
   public async getHeight(): Promise<DaemonHeight> {
@@ -21,6 +29,7 @@ export class DaemonRpc {
           headers: {
             Accept: "application/json",
           },
+        
         }
       );
       return data;
@@ -37,6 +46,7 @@ export class DaemonRpc {
           headers: {
             Accept: "application/json",
           },
+          
         }
       );
       return data;
@@ -53,6 +63,7 @@ export class DaemonRpc {
           headers: {
             Accept: "application/json",
           },
+      
         }
       );
       return data;
@@ -83,6 +94,7 @@ export class DaemonRpc {
           headers: {
             Accept: "application/json",
           },
+        
         }
       );
       return data;
@@ -102,6 +114,7 @@ export class DaemonRpc {
           headers: {
             Accept: "application/json",
           },
+        
         }
       );
       return data;
@@ -141,7 +154,7 @@ export class DaemonRpc {
           headers: {
             Accept: "application/json",
           },
-          
+                
         }
       );
       return data;
@@ -152,6 +165,7 @@ export class DaemonRpc {
   }
 
   public async getPricePegs(): Promise<DaemonPricePegs> {
+
     try {
       const { data } = await axios.get<DaemonPricePegs>(`${this.baseUrl}/get_safex_price_pegs`,
         {
@@ -178,6 +192,7 @@ export class DaemonRpc {
           headers: {
             Accept: "application/json",
           },
+        
         }
       );
       return data;
@@ -204,6 +219,7 @@ export class DaemonRpc {
           headers: {
             Accept: "application/json",
           },
+    
         }
       );
       return data;
