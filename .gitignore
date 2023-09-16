@@ -1,8 +1,10 @@
 package-lock.json
-node_modules/
+node_modules**
 *.log
 local/
 build/
 .env
 src/common/auth/*.json
 out/
+bin/
+dist/

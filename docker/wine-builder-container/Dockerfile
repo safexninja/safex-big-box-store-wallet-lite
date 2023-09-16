@@ -25,8 +25,19 @@ RUN apt-get install -y \
     libldns-dev \
     libexpat1-dev \
     libprotobuf-dev \
-    nano 
-    
+    nano \
+    sudo 
+
+ARG USER=docker
+ARG USERID=1000
+ENV HOME /home/$USER
+RUN groupadd -g $USERID $USER 
+RUN adduser -u $USERID -gid $USERID --disabled-password --gecos '' $USER
+
+RUN adduser $USER sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+USER $USER
+WORKDIR $HOME
+
 LABEL author="Safex.Ninja"
-
-
