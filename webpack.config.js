@@ -33,7 +33,7 @@ const bundle = {
   ]
   ,
   output: {
-    path: path.resolve(__dirname, 'build/app/public/js'),
+    path: path.resolve(__dirname, 'out/app/public/js'),
     filename: 'bundle.js'
   },
   devtool: false,
@@ -62,7 +62,7 @@ const login = {
   ]
   ,
   output: {
-    path: path.resolve(__dirname, 'build/app/public/js'),
+    path: path.resolve(__dirname, 'out/app/public/js'),
     filename: 'login.js'
   },
   devtool: false,

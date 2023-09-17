@@ -10,6 +10,7 @@
     "build": "shx rm -fR ./out && npx tsc && webpack && shx cp -r ./src/app/public/icons ./out/app/public/ && shx cp -r ./src/app/public/styles ./out/app/public/ && shx cp ./src/app/public/loader.html ./out/app/public/ && shx cp -r ./src/app/templates ./out/app/templates/",
     "dist": "build",
     "make-linux-installer": "npm run build && electron-builder build -l",
+    "make-mac-installer": "npm run build && electron-builder build -m",
     "make-win-installer": "npm run build && electron-builder build -w --x64",
     "start": "electron ."
   },

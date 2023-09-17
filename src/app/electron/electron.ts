@@ -2,6 +2,7 @@ import {app, BrowserWindow, ForkOptions} from 'electron'
 import { ChildProcess, fork } from "child_process";
 import path from "path";
 import { connectDb, createTables, disconnectDb } from '../../common/db/connection';
+import { saveJsonToFile } from '../../common/utils/json-utils';
 
 const fs = require('fs');
 // const name = 'Safex-Big-Box-Store'
@@ -41,6 +42,14 @@ createDirIfNotExists(walletsPath)
  
 
 function createWindow() {
+
+    // const jwtSecret = require('crypto').randomBytes(64).toString('hex');
+    // const jwtConfig = {
+    //     jwtSecret: jwtSecret,
+    //     jwtExpiresIn: 86400
+    // }
+
+    // saveJsonToFile('../../common/auth/config.json', JSON.stringify(jwtConfig))
 
     // Create the browser window.
     const mainWindow = new BrowserWindow({
