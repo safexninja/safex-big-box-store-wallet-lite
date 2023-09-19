@@ -2,8 +2,9 @@ import * as jwt from 'jsonwebtoken'
 import { Request, Response } from 'express';
 import { IAccountId, IWalletId } from '../db/models/interfaces';
 import { LogLevel, log } from '../utils/logger';
+import path from 'path';
 
-const configuration = require('./config.json');
+const configuration = require(path.join(process.env.APP_PATH as string, "config.json"));
 
 export interface authenticatedUser {
     uuid: string;

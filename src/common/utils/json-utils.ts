@@ -10,12 +10,12 @@ export function loadJsonFromFile (file: fs.PathLike): any {
     }
 }
 
-export function saveJsonToFile (file: fs.PathLike, data: string): void {
+export function saveJsonToFile (file: fs.PathLike, data: any): void {
     const dataJSON = JSON.stringify(data)
     fs.writeFileSync(file, dataJSON)
 }
 
-export function appendJsonToFile (file: fs.PathLike, data: string): void {
+export function appendJsonToFile (file: fs.PathLike, data: any): void {
     const fileData = loadJsonFromFile(file)
     fileData.push(data)
     saveJsonToFile(file, fileData)

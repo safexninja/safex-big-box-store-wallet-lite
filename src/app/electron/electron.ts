@@ -12,19 +12,14 @@ import { log, LogLevel } from '../../common/utils/logger';
 
 const fs = require('fs');
 
-const userDataPath = app.getPath("userData");
-const appDataPath = path.join(userDataPath, "bigbox")
-const databasePath = path.join(appDataPath, "database")
-const walletsPath = path.join(appDataPath, "wallets")
+process.env.USER_DATA_PATH = app.getPath("userData");
+process.env.APP_PATH = path.join(process.env.USER_DATA_PATH, "bigbox")
+process.env.DB_PATH = path.join(process.env.APP_PATH, "database")
+process.env.FILE_STORE_DIR = path.join(process.env.APP_PATH, "wallets")
 
 let appServerProcess: ChildProcess
 let apiServerProcess: ChildProcess
 let walletServerProcess: ChildProcess
-
-process.env.FILE_STORE_DIR=walletsPath
-process.env.DB_PATH=databasePath
-console.log(userDataPath)
-console.log('database: ' + databasePath)
 
 const createDirIfNotExists = (dir: string) =>{
 
@@ -36,22 +31,25 @@ const createDirIfNotExists = (dir: string) =>{
     }
 
 }
-createDirIfNotExists(appDataPath)
-createDirIfNotExists(databasePath)
-createDirIfNotExists(walletsPath)
+createDirIfNotExists(process.env.APP_PATH)
+createDirIfNotExists(process.env.DB_PATH)
+createDirIfNotExists(process.env.FILE_STORE_DIR)
  
 
 
 function createWindow() {
 
-    // const jwtSecret = require('crypto').randomBytes(64).toString('hex');
-    // const jwtConfig = {
-    //     jwtSecret: jwtSecret,
-    //     jwtExpiresIn: 86400
-    // }
+    const jwtSecret = require('crypto').randomBytes(64).toString('hex');
+    const jwtConfig = {
+        jwtSecret: jwtSecret,
+        jwtExpiresIn: 86400
+    }
 
-    // saveJsonToFile('../../common/auth/config.json', JSON.stringify(jwtConfig))
-
+    if(process.env.APP_PATH){
+        log(LogLevel.INFO, 'Saving newly generated JWT secret')
+        saveJsonToFile( path.join(process.env.APP_PATH, "config.json"), jwtConfig)
+    }
+    
     // Create the browser window.
     const mainWindow = new BrowserWindow({
     minWidth: 1575,
@@ -78,7 +76,7 @@ function createWindow() {
 
 
 function initializeDataBase() {
-    connectDb(path.join(databasePath, "bigbox.db"))
+    connectDb(path.join(process.env.DB_PATH as string, "bigbox.db"))
     createTables()
 }
 
