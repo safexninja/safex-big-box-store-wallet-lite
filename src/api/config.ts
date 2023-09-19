@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-import { log, LogLevel} from '../common/utils/logger';
 import * as crypto from '../common/crypto/crypto'
 
 // overridable from env vars:

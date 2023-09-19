@@ -52,13 +52,13 @@ interface ExtendedTransactionInfo extends TransactionInfo{
     tokenAmount: string
 }
 
-var log_file = fs.createWriteStream(__dirname + '/walletworker.log', {flags : 'w'});
-var log_stdout = process.stdout;
+// var log_file = fs.createWriteStream(__dirname + '/walletworker.log', {flags : 'w'});
+// var log_stdout = process.stdout;
 
-console.log = function(d) { //
-  log_file.write(util.format(d) + '\n');
-  log_stdout.write(util.format(d) + '\n');
-};
+// console.log = function(d) { //
+//   log_file.write(util.format(d) + '\n');
+//   log_stdout.write(util.format(d) + '\n');
+// };
 
 const parentPort = new ParentPort()
 const workerData: WorkerData = JSON.parse(parentPort.getData())
@@ -419,7 +419,7 @@ async function createAccount(data: WsRequestMessageData_CreateAccount) {
             lastError: 'none',
             deleted: false
         }
-        await accountDb.addAccount(account, CONFIG.HashedMasterPassword)
+        await accountDb.addAccount(account, process.env.HASHED_MASTER_PASSWORD || "")
         
     } catch (error) {
         handleWalletError((error as Error).message, 'WWS06A - Error when creating account: ' + data.account)
@@ -465,7 +465,7 @@ async function recoverAccount(data: WsRequestMessageData_RecoverAccount) {
             lastError: 'none',
             deleted: false
         }
-        await accountDb.addAccount(account, CONFIG.HashedMasterPassword)
+        await accountDb.addAccount(account, process.env.HASHED_MASTER_PASSWORD || "")
         
     } catch (error) {
         handleWalletError((error as Error).message, 'WWS07 - Error when recovering account: ' + data.account)
@@ -775,14 +775,14 @@ async function openWallet(data: WsRequestMessageData_OpenWallet) {
             activeWallet.path = path.join(CONFIG.FileStoreDir, data.uuid , "wallet")
             activeWallet.uuid = data.uuid
     
-            const existingWallet =  await walletDb.findWalletFullDataByUUID(data.uuid, CONFIG.HashedMasterPassword)
+            const existingWallet =  await walletDb.findWalletFullDataByUUID(data.uuid, process.env.HASHED_MASTER_PASSWORD || "")
             activeWallet.password = existingWallet.password
     
             var args = {
                 'path': activeWallet.path,
                 'password': activeWallet.password,
                 'network': CONFIG.Network,
-                'daemonAddress': daemon.getUrl()
+                'daemonAddress': daemon.getAddressAndPort()
             }
         
             try {
@@ -795,7 +795,7 @@ async function openWallet(data: WsRequestMessageData_OpenWallet) {
                         'path': activeWallet.path,
                         'password': activeWallet.password,
                         'network': CONFIG.Network,
-                        'daemonAddress': daemon.getUrl(),
+                        'daemonAddress': daemon.getAddressAndPort(),
                         'restoreHeight': 0,
                         'addressString': existingWallet.address,
                         'viewKeyString': existingWallet.viewKey,
@@ -862,7 +862,7 @@ async function createWallet(){
             'path': activeWallet.path,
             'password': activeWallet.password,
             'network': CONFIG.Network,
-            'daemonAddress': daemon.getUrl()   
+            'daemonAddress': daemon.getAddressAndPort()   
         }
         
         try {
@@ -892,7 +892,7 @@ async function createWalletFromKeys(data: WsRequestMessageData_CreateWalletFromK
             'path': activeWallet.path,
             'password': activeWallet.password,
             'network': CONFIG.Network,
-            'daemonAddress': daemon.getUrl(),
+            'daemonAddress': daemon.getAddressAndPort(),
             'restoreHeight': 0,
             'addressString': data.address,
             'viewKeyString': data.viewKey,
@@ -1161,7 +1161,7 @@ async function handleOpenWallet(err:any, openWallet: any) {
             deleted: false
         }
 
-        await walletDb.addWallet(wallet, CONFIG.HashedMasterPassword)      
+        await walletDb.addWallet(wallet, process.env.HASHED_MASTER_PASSWORD || "")      
 
         let msg: WorkerWalletCreatedMessage = {type: WsResponseType.WALLET_CREATED, data: { uuid: activeWallet.uuid}};
         parentPort.postMessage(msg);
@@ -1186,6 +1186,7 @@ async function handleOpenWallet(err:any, openWallet: any) {
     });
 
     activeWallet.wallet.on('refreshed', async function () {
+
 
         //update database
         await walletDb.updateWalletInfo(
@@ -1239,12 +1240,13 @@ async function handleOpenWallet(err:any, openWallet: any) {
 
 async function init() {
     try {
+        
         connectDb(path.join(CONFIG.DbPath, CONFIG.DbName))
         let connectionMsg: WorkerReponseMessage = {type: WsResponseType.CONNECTED, data: { status: "ready"}}
         parentPort.postMessage(connectionMsg)
         
         if(authenticatedUser){
-            const userSettings = await userSettingsDb.findSettingsByUserUUID(authenticatedUser.uuid, CONFIG.HashedMasterPassword)
+            const userSettings = await userSettingsDb.findSettingsByUserUUID(authenticatedUser.uuid, process.env.HASHED_MASTER_PASSWORD || "")
             daemon.setAddress(userSettings.daemonAddress)
         }
     

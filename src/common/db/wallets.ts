@@ -1,5 +1,3 @@
-import { UpdateWriteOpResult } from "mongoose";
-import { Wallet } from "./models/models";
 import { IWallet, IWalletId, IWalletStrict } from "./models/interfaces";
 import { decryptWithHashString, encryptWithHashString } from "../crypto/crypto";
 import { getDb } from './connection';

@@ -1,6 +1,4 @@
-import { Account } from './models/models';
 import { IAccount, IAccountId, IAccountStrict } from './models/interfaces';
-import { UpdateWriteOpResult } from 'mongoose';
 import { decryptWithHashString, encryptWithHashString } from '../crypto/crypto';
 import { getDb } from './connection';
 
@@ -91,19 +89,6 @@ export async function findAccountsIdByUserUUID(userUuid: string): Promise<IAccou
         }
     });
 };
-
-// NOT USED BY THE APP - FOR TESTING PURPOSES
-export async function findAllAccounts(): Promise<typeof Account[]> {
-    return new Promise<typeof Account[]>((resolve, reject) => {
-        try {
-            const acc = getDb().prepare(`SELECT * FROM account`).all() as typeof Account[]
-            resolve(acc)
-        } catch (err) {
-            reject(err);
-        }
-    });
-};
-
 
 export async function updateAccountDeleted(
     uuid: string,

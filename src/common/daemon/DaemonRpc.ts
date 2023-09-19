@@ -13,7 +13,7 @@ export class DaemonRpc {
     this.baseUrl = `${addres}:${port}`;
   }
 
-  public getUrl(): string{
+  public getAddressAndPort(): string{
     return this.baseUrl;
   }
 

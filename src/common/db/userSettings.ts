@@ -1,6 +1,4 @@
-import { UserSettings } from './models/models';
 import { IUserSettings } from './models/interfaces';
-import { UpdateWriteOpResult } from 'mongoose';
 import { decryptWithHashString, encryptWithHashString } from '../crypto/crypto';
 import { getDb } from './connection';
 

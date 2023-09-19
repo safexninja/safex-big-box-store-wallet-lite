@@ -48,8 +48,8 @@ import { toNormalUnits } from '../common/utils/units';
 import { convertTimestampToDate } from '../common/utils/dates';
 import { ErrorLogComponent, ErrorLogSeverity } from '../common/db/enums/errorlog';
 import { comparePassword, hashPassword } from '../common/auth/passwords';
-import e from 'express';
 import { generateLongId } from './utils/messaging';
+import { processMessage } from '../common/interfaces/processMessage';
 
 
 const { DM } = require("data-manipulator");
@@ -140,6 +140,15 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
             
                 if(await comparePassword(requestData.password, user.password) == true ){
                     
+                    if(process.send){
+                        let processMsg: processMessage = {
+                            type: "set password",
+                            message: requestData.password
+                        } 
+                        process.send(processMsg);
+                        CONFIG.HashedMasterPassword = crypto.createHash(requestData.password)
+                    }                    
+                    
                     const tokenData: authenticatedUser = {
                         uuid: user.uuid,
                         name: user.name,
@@ -157,7 +166,7 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
 
                     res.cookie("access_token", jwtToken, {
                         httpOnly: false,
-                        secure: true,
+                        secure: false,
                       })
                     .status(200).send(
                             JSON.stringify({
@@ -206,7 +215,7 @@ app.get('/api/auth/refresh', authenticateJwt, async (req: Request, res: Response
                 res
                 .cookie("access_token", jwtToken, {
                     httpOnly: false,
-                    secure: true,
+                    secure: false,
                   })
                 .status(200).send(
                         JSON.stringify({

@@ -3,7 +3,6 @@ import { response } from "express";
 
 // utils
 import { log, LogLevel } from "../../common/utils/logger";
-import { messageSchema } from "../db/models/schemas";
 import { MessageDirection } from "../enums/messages";
 
 export type StoreFrontApiStatus = {

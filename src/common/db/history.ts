@@ -1,4 +1,3 @@
-import { TxnHistory } from './models/models';
 import { ITxnHistory } from './models/interfaces';
 import { getDb } from './connection';
 

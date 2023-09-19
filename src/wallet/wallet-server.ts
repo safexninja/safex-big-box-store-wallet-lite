@@ -6,6 +6,7 @@ import url from "url";
 
 import * as WebSocket from 'ws';
 
+import * as crypto from '../common/crypto/crypto'
 
 import { CONFIG} from './config'
 import { WalletWorkerManager } from './walletworker/WalletWorkerManager';;
@@ -18,6 +19,7 @@ import { validateMessage } from './helpers/validateMessage';
 import { WsMessageValidationStatus } from './enums/websocket';
 import { ExtWebSocket, WsMessageValidation } from './interfaces/websocket';
 import { decodeJwt } from '../common/auth/authJwt';
+import { processMessage } from '../common/interfaces/processMessage';
 
 
 
@@ -27,6 +29,15 @@ const cleanBroadCastChannels =  (async () => {
 })
 
 cleanBroadCastChannels();
+
+process.on('message', (m: processMessage) => {
+    if(m.type == "set password"){
+        log(LogLevel.MESSAGE, 'Wallet got pasword from api:' + m.message)
+        CONFIG.HashedMasterPassword = crypto.createHash(m.message)
+        process.env.HASHED_MASTER_PASSWORD=CONFIG.HashedMasterPassword
+    }
+    
+});
 
 
 // declare servers

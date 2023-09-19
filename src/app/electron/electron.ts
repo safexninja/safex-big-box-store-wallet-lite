@@ -1,12 +1,16 @@
-import {app, BrowserWindow, ForkOptions} from 'electron'
+import {app, BrowserWindow} from 'electron'
 import { ChildProcess, fork } from "child_process";
 import path from "path";
 import { connectDb, createTables, disconnectDb } from '../../common/db/connection';
+import { processMessage } from '../../common/interfaces/processMessage';
 import { saveJsonToFile } from '../../common/utils/json-utils';
+import { log, LogLevel } from '../../common/utils/logger';
+
+// process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1';
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// app.commandLine.appendSwitch('ignore-certificate-errors');
 
 const fs = require('fs');
-// const name = 'Safex-Big-Box-Store'
-// const appName = app.getPath("exe");
 
 const userDataPath = app.getPath("userData");
 const appDataPath = path.join(userDataPath, "bigbox")
@@ -21,10 +25,6 @@ process.env.FILE_STORE_DIR=walletsPath
 process.env.DB_PATH=databasePath
 console.log(userDataPath)
 console.log('database: ' + databasePath)
-// const expressPath = appName.endsWith(`${name}.exe`)
-//   ? path.join("./resources/app.asar", "./build/app/server/app-server.js")
-//   : "./build/app/server/app-server.js";
-
 
 const createDirIfNotExists = (dir: string) =>{
 
@@ -40,6 +40,7 @@ createDirIfNotExists(appDataPath)
 createDirIfNotExists(databasePath)
 createDirIfNotExists(walletsPath)
  
+
 
 function createWindow() {
 
@@ -58,7 +59,10 @@ function createWindow() {
     width: 1200,
     height: 800,
     webPreferences: {
-        webSecurity: false
+        webSecurity: false,
+        nodeIntegration: true,
+        // sandbox: false,
+        // experimentalFeatures: true
         }
     });
 
@@ -80,9 +84,17 @@ function initializeDataBase() {
 
 function startBackgroundServers() {
 
-    appServerProcess = fork(path.join(__dirname, '../server/app-server.js'), {detached: true })
-    apiServerProcess = fork(path.join(__dirname, '../../api/api-server.js'), {detached: true})
-    walletServerProcess = fork(path.join(__dirname, '../../wallet/wallet-server.js'), {detached: true})
+    appServerProcess = fork(path.join(__dirname, '../server/app-server.js'), {detached: false })
+    apiServerProcess = fork(path.join(__dirname, '../../api/api-server.js'), {detached: false})
+    walletServerProcess = fork(path.join(__dirname, '../../wallet/wallet-server.js'), {detached: false})
+
+    apiServerProcess.on('message', (m: processMessage) => {
+        if(m.type == "set password"){
+            log(LogLevel.MESSAGE, 'Got password message from api server sending to wallet server:' + m.message)
+            walletServerProcess.send({ type: m.type, message: m.message } as processMessage);
+        }
+        
+    });
 
 }
 
@@ -152,4 +164,6 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+
 

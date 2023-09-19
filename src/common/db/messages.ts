@@ -1,6 +1,4 @@
-import { Message } from './models/models';
 import { IMessage } from './models/interfaces';
-import { UpdateWriteOpResult } from 'mongoose';
 import { MessageStatus } from '../enums/messages';
 import { decryptWithHashString, encryptWithHashString } from '../crypto/crypto';
 import { getDb } from './connection';

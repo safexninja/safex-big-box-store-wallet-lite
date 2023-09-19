@@ -72,7 +72,7 @@ export interface WsInterestInfo {
 
 function createWebSocketPath(path: string): string {
     var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:';
-    return protocolPrefix + '//localhost:3150' + path
+    return 'ws:' + '//localhost:3150' + path
 }
 
 

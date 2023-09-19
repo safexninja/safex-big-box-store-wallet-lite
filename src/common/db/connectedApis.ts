@@ -1,5 +1,3 @@
-import { UpdateWriteOpResult } from 'mongoose';
-import { ConnectedApi } from './models/models';
 import { IConnectedApi } from './models/interfaces';
 import { getDb } from './connection';
 

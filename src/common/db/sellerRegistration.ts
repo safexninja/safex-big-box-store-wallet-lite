@@ -1,4 +1,3 @@
-import { SellerRegistration } from './models/models';
 import { ISellerRegistration } from './models/interfaces';
 import { getDb } from './connection';
 

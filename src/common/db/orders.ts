@@ -1,6 +1,4 @@
-import { Order } from './models/models';
 import { IOrder } from './models/interfaces';
-import { UpdateWriteOpResult } from 'mongoose';
 import { CommunicationStatus } from '../enums/communication';
 import { OrderStatus } from '../enums/orders';
 import { TxnStatus } from '../enums/txns';

@@ -1,5 +1,3 @@
-import { UpdateWriteOpResult } from 'mongoose';
-import { User } from './models/models';
 import { IUser, IUserStrict } from './models/interfaces';
 import { getDb } from './connection';
 

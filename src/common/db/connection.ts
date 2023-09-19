@@ -247,7 +247,7 @@ export function createTables(): void   {
 
         // create MESSAGE table
         db.exec(`CREATE TABLE IF NOT EXISTS message (
-            uuid TEXT PRIMARY KEY,
+            uuid TEXT NOT NULL,
             messageType TEXT NOT NULL,
             purchaseUuid TEXT,
             orderUuid TEXT,

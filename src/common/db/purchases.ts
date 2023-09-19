@@ -1,6 +1,4 @@
-import { Purchase } from './models/models';
 import { IPurchase } from './models/interfaces';
-import { UpdateWriteOpResult } from 'mongoose';
 import { CommunicationStatus } from '../enums/communication';
 import { PurchaseStatus } from '../enums/purchases';
 import { TxnStatus } from '../enums/txns';

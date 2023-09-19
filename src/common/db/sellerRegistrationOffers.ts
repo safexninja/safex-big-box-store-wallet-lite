@@ -1,4 +1,3 @@
-import { SellerRegistrationOffer } from './models/models';
 import { ISellerRegistrationOffer } from './models/interfaces';
 import { getDb } from './connection';
 

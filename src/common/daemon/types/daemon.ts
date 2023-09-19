@@ -1,4 +1,3 @@
-import { SensibleTxnType } from "../../enums/txns";
 
 export type DaemonHeight = {
   height: number | undefined;

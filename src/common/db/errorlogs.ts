@@ -1,4 +1,3 @@
-import { ErrorLog } from './models/models';
 import { IErrorLog } from './models/interfaces';
 import { getDb } from './connection';
 

@@ -1,12 +1,7 @@
 
 
-import { getOpenOrders, OpenOrder, getClosedOrders, ClosedOrder, getWallets, refreshAuthToken, setOrderValidation, getErrorLog, getLogsLastSeenTouch } from './apicalls'
+import { getErrorLog, getLogsLastSeenTouch } from './apicalls'
 import { convertTimestampToDate } from '../../../common/utils/dates'
-import { PollUntil } from 'poll-until-promise'
-import { createAccountModal, clearAllBackDrops } from './modals'
-import { WalletWsConnectionHandler, websocketConnectionManager, WsCheckTxnProofState } from './websocket'
-import { toNormalUnits } from '../../../common/utils/units'
-import { showMessageAndManageModal } from './managing'
 import { ErrorLogSeverity } from '../../../common/db/enums/errorlog'
 
 const buttonLoadLogs = document.getElementById('button_load_logs') as HTMLButtonElement
