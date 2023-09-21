@@ -26,7 +26,7 @@ export const CONFIG = {
     HashedMasterPassword: ""
 };
 
-// TODO impl other method for hashing users password
+// This will be replaced with a hashed user password on authentication
 CONFIG.HashedMasterPassword = crypto.createHash("safex")
 
 // log(LogLevel.INFO, "CONFIG: " +  JSON.stringify(CONFIG))

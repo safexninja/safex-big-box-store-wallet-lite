@@ -64,6 +64,8 @@ function createWindow() {
         }
     });
 
+    mainWindow.setMenuBarVisibility(false);
+
     mainWindow.loadFile(path.join(__dirname, '../public/loader.html'));
 
     mainWindow.on('close', ()=>{
@@ -88,7 +90,6 @@ function startBackgroundServers() {
 
     apiServerProcess.on('message', (m: processMessage) => {
         if(m.type == "set password"){
-            log(LogLevel.MESSAGE, 'Got password message from api server sending to wallet server:' + m.message)
             walletServerProcess.send({ type: m.type, message: m.message } as processMessage);
         }
         

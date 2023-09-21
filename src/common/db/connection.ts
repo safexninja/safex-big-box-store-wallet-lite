@@ -15,7 +15,7 @@ export function getDb(): SqlLite.Database   {
 
 export function connectDb(path: string): void   {
     try {
-        const db = new SqlLite(path, {verbose: console.log})
+        const db = new SqlLite(path)
         db.pragma('journal_mode = WAL');
         setDb(db)
         log(LogLevel.MESSAGE, "Opened database:  " + path)

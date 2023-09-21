@@ -52,13 +52,13 @@ interface ExtendedTransactionInfo extends TransactionInfo{
     tokenAmount: string
 }
 
-// var log_file = fs.createWriteStream(__dirname + '/walletworker.log', {flags : 'w'});
-// var log_stdout = process.stdout;
+var log_file = fs.createWriteStream(process.env.APP_PATH  + '/walletworker.log', {flags : 'w'});
+var log_stdout = process.stdout;
 
-// console.log = function(d) { //
-//   log_file.write(util.format(d) + '\n');
-//   log_stdout.write(util.format(d) + '\n');
-// };
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
 
 const parentPort = new ParentPort()
 const workerData: WorkerData = JSON.parse(parentPort.getData())
@@ -718,6 +718,7 @@ async function checkTxProof(data: WsRequestMessageData_CheckTxProof) {
 };
 
 async function handleWalletError(err: any, msg: string) { 
+    console.log(JSON.stringify(err as Error))
     let errorMsg: WorkerErrorMessage = {type: WsResponseType.ERROR, data: { error: JSON.stringify(err), message: msg}}
     parentPort.postMessage(errorMsg)
 
@@ -1213,7 +1214,7 @@ async function handleOpenWallet(err:any, openWallet: any) {
         let refreshMsg: WorkerRefreshedMessage = {
             type: WsResponseType.WALLET_REFRESHED, 
             data: { 
-                    height: parseInt(activeWallet.wallet.blockchainHeight()), 
+                    height: parseInt(activeWallet.wallet.daemonBlockchainHeight()), 
                     balance: parseInt(activeWallet.wallet.balance()),
                     unlockedBalance: parseInt(activeWallet.wallet.unlockedBalance()),
                     tokenBalance: parseInt(activeWallet.wallet.tokenBalance()),

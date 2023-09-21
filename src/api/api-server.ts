@@ -3299,13 +3299,11 @@ async function enrichOpenPurchasesAndOrders(){
 
     if(!daemonInfo.height){
         log(LogLevel.INFO, "Not enriching because daemon info is unknown ...")
-        console.log("Not enriching because daemon info is unknown ...")
         return
     }
 
     if(daemonInfo.height < daemonInfo.target_height){
         log(LogLevel.INFO, "Not enriching because daemon is syncing ...")
-        console.log("Not enriching because daemon is syncing ...")
         return
     }
 

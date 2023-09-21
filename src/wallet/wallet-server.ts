@@ -32,11 +32,9 @@ cleanBroadCastChannels();
 
 process.on('message', (m: processMessage) => {
     if(m.type == "set password"){
-        log(LogLevel.MESSAGE, 'Wallet got pasword from api:' + m.message)
         CONFIG.HashedMasterPassword = crypto.createHash(m.message)
         process.env.HASHED_MASTER_PASSWORD=CONFIG.HashedMasterPassword
     }
-    
 });
 
 

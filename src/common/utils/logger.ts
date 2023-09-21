@@ -10,7 +10,7 @@ export enum LogLevel{
     MESSAGE
 }
 
-const LOGLEVEL =  LogLevel[process.env.LOGLEVEL as keyof typeof LogLevel] || LogLevel.DEBUG;
+const LOGLEVEL =  LogLevel[process.env.LOGLEVEL as keyof typeof LogLevel] || LogLevel.WARN;
 
 export function log(logLevel: LogLevel, message: any){
     switch (logLevel){
