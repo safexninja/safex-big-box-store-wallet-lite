@@ -257,7 +257,7 @@ export class WalletWsConnectionHandler {
                         break;
                 }
             } catch (error){
-                console.log(`Something went wrong with the wallet websocket connection for wallet id '${this.uuid}' ...`)
+                console.log(`Something went wrong with the wallet websocket connection for wallet id '${this.uuid}' ... Error: ${error}`)
             }
                
         
