@@ -1,0 +1,43 @@
+<div id="page_orders" class="d-none">
+
+<div class="row mt-2">
+    <div class="col-8 col-md-2">
+        <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="order_auto_refresh" checked="">
+        <label class="form-check-label" for="order_auto_refresh">Auto refresh</label>
+        <i data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-custom-class="custom-tooltip" data-bs-title="Auto fresh page and check for new messages every minute" style="color:#424dce;vertical-align: middle;margin-bottom: 2px;" class="bx bxs-info-circle ms-2"></i>
+        </div>
+        
+    </div>
+     <div class="col">
+        <i class="bx bx-sync icon_small me-2 walleticons" id="order_refresh"></i>
+    </div>
+</div>
+
+
+<br>
+
+
+<h5 class="my-3">New Orders</h5>
+<hr>
+<div class="container py-1 px-0 float-md-start" id="container_new_orders">
+</div>
+
+<h5 class="my-3 mt-5">Shipped</h5>
+<hr>
+<div class="container py-1 px-0 float-md-start" id="container_shipped_orders">
+</div>
+
+<h5 class="my-3 mt-5">Delivery Confirmed</h5>
+<hr>
+<div class="container py-1 px-0 float-md-start" id="container_delivered_orders">
+</div>
+
+<h5 class="my-3 mt-5">Closed</h5>
+<hr>
+<button type="button" id="btn_load_closed_orders" class="btn btn-primary float-start ms-0 my-3">Load</button>
+<div class="container py-1 px-0 float-md-start" id="container_closed_orders">
+</div>
+
+</div>
+

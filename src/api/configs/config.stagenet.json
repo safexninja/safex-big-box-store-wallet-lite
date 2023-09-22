@@ -1,0 +1,8 @@
+{
+    "network": "stagenet",
+    "daemonAddress": "http://localhost",
+    "daemonPort": 30393,
+    "port": 3101,
+    "dbName": "bigbox.db"
+}
+

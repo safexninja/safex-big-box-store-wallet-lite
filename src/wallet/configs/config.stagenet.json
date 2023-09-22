@@ -1,0 +1,10 @@
+{
+    "network": "stagenet",
+    "daemonAddress": "http://localhost",
+    "daemonPort": 30393,
+    "walletInactiveTimeout": 3000000,
+    "fileStoreDir": "/<path>",
+    "port": 3150,
+    "dbName": "bigbox.db"
+}
+

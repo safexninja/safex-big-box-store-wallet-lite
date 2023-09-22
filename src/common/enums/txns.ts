@@ -1,0 +1,25 @@
+
+export enum TxnStatus {
+    UNKNOWN = "UNKNOWN",
+    POOL = "POOL",
+    CONFIRMED = "CONFIRMED"
+}
+
+
+export enum SensibleTxnType {
+    UNKNOWN = "UNKNOWN",
+    SFX = "SAFEX CASH",
+    SFT = "SAFEX TOKEN",
+    MIGRATION = "MIGRATION",
+    STAKE = "STAKE",
+    UNSTAKE = "UNSTAKE",
+    ORDER = "ORDER",
+    PURCHASE = "PURCHASE",
+    NEW_ACCOUNT = "NEW ACCOUNT",
+    EDIT_ACCOUNT = "EDIT ACCOUNT",
+    NEW_OFFER = "NEW OFFER",
+    EDIT_OFFER = "EDIT OFFER",
+    FEEDBACK = "FEEDBACK",
+    PRICE_PEG = "PRICE PEG",
+    PRICE_PEG_UDPATE = "PRICE PEG UPDATE",
+}

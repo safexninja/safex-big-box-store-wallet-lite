@@ -1,0 +1,81 @@
+<div id="page_listings" class="d-none">
+
+
+<div class="container py-3 px-0 float-md-start d-none" id="container_listings_no_acount">
+    <div class="row">
+            <div class="col">
+             <div class="alert alert-info" role="alert">
+                        You don't have a merchant account yet. Please create an account in a wallet. 
+                        Sync the wallet after 10 block confirmations and the account will be active. 
+                        <br><br>
+                        Then refresh the page to load the new account into this page (<a href="#" onclick="window.location.reload()">click here to refresh the application</a>).
+                </div>
+            </div>
+    </div>
+</div>
+
+
+<div class="container py-1 px-0 float-md-start" id="container_listings_select">
+     <form id="form_listings_select" novalidate autocomplete="off">
+
+        <div class="my-1">
+
+            <div class="row align-items-end">
+        
+                <div class="col-md-4">
+                 
+                    <label for="select_listings_account" class=" col-form-label">Account <i class='bx bx-sync icon_xsmall icon_button' id="icon_listings_sync_accounts"></i></label>
+                
+                     <select class="form-select" aria-label="Select account" id="select_listings_account">
+                     </select>
+
+                </div>
+
+    
+                 <div class="col">
+                    <button type="submit" class="btn btn-primary float-md-start" id="btn_listings_load">Load</button>
+                </div>
+
+                <div class="col">
+                    <label for="btn_listings_account_register" class=" col-form-label">Registration to Store <i class='bx bx-sync icon_xsmall icon_button' id="icon_listings_sync_registration"></i></label><br>
+                    <div style="display: inline-block;vertical-align: middle;">
+                        <button type="button" class="btn btn-primary float-md-start d-none btn-success" id="btn_listings_account_register">Register</button>
+                        <button type="button" class="btn btn-primary float-md-start d-none btn-info" id="btn_listings_account_pending" disabled>Pending ...</button>
+                        <button type="button" class="btn btn-primary float-md-start d-none btn-danger" id="btn_listings_account_revoke">Revoke Registration</button>
+                        <button type="button" class="btn btn-primary float-md-start d-none btn-warning" id="btn_listings_account_rejected" disabled>Rejected</button>
+                        <button type="button" class="btn btn-primary float-md-start d-none btn-danger" id="btn_listings_account_error" disabled>Error</button>
+                    </div>
+                    <div style="display: inline-block;vertical-align: middle;">
+                        <i class='bx bxs-info-circle' style='color:#424dce; margin-top: 10px; margin-left: 10px;'  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Load an account. Then the registration status to this store will be displayed" id="tooltip_seller_registration_status"></i>
+                    </div>
+                </div>
+            
+                   <div class="col-md">
+                <!-- empty column for spacing right -->
+                </div>
+            
+            </div>
+
+        </div>
+
+</div>
+
+<div class="container py-1 px-0 float-md-start" id="container_listings_create">
+    <div class="row">
+            <div class="col">
+              <button type="button" class="btn btn-success float-md-start" id="btn_offer_create">Create Offer</button>
+            </div>
+    </div>
+</div>
+
+
+<div class="container pt-4 px-0 float-md-start" >
+    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-4 g-4" id="container_listings_overview">    
+    </div>
+</div>
+
+
+
+
+</div>
+

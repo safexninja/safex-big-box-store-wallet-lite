@@ -1,0 +1,1 @@
+These config files are mainly for dev purposes (when running without docker compose). They can be used for configuration. But to keep easier control over the config it is advised to set (override) all the settings in the docker compose file.
