@@ -95,6 +95,8 @@ if(formSendCashToken){
     formSendCashToken.addEventListener('submit', async (e) => {
         e.preventDefault()
 
+        await refreshAuthToken()
+
         if(! new Array(...formSendCashToken.classList).includes('was-validated')){
             return
         }   
@@ -160,6 +162,8 @@ if(formHardRescanWallet){
     formHardRescanWallet.addEventListener('submit', async (e) => {
         e.preventDefault()
 
+        await refreshAuthToken()
+
         const wallet = formHardRescanWallet.getAttribute("data-wallet")
         await refreshAuthToken() 
             
@@ -186,7 +190,7 @@ if(formHardRescanWallet){
 
             let pollUntilPromise = new PollUntil();
             pollUntilPromise
-                .stopAfter(1800000) 
+                .stopAfter(3800000) 
                 .tryEvery(200)
                 .execute(() => {
                     return new Promise((resolve, reject) => {
@@ -204,7 +208,7 @@ if(formHardRescanWallet){
                     
                     let pollUntilPromiseRescanned = new PollUntil();
                     pollUntilPromiseRescanned
-                        .stopAfter(18000000)
+                        .stopAfter(58000000)
                         .tryEvery(1500)
                         .execute(() => {
                             return new Promise((resolve, reject) => {

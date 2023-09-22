@@ -197,40 +197,52 @@ app.get("/api/auth/logout",  (req: Request, res: Response) => {
   });
 
 
-app.get('/api/auth/refresh', authenticateJwt, async (req: Request, res: Response) => {
+app.get('/api/auth/validate', authenticateJwt, async (req: Request, res: Response) => {
+    try{
         const authenticatedUser = decodeJwt(getTokenFromAuthHeader(req))
-        try{
-            if(authenticatedUser){
-                const user = await userDb.findUserByName(authenticatedUser.name)
-                const tokenData: authenticatedUser = {
-                    uuid: user.uuid,
-                    name: user.name,
-                    termsAccepted: user.termsAccepted,
-                    accounts: await accountDb.findAccountsIdByUserUUID(user.uuid),
-                    wallets: await walletDb.findWalletsIdByUserUUID(user.uuid)
-                }
-
-                const jwtToken = generateJwt(tokenData)
-
-                res
-                .cookie("access_token", jwtToken, {
-                    httpOnly: false,
-                    secure: false,
-                  })
-                .status(200).send(
-                        JSON.stringify({
-                            accesToken: jwtToken
-                        })
-                    )
-            }
-
-        } catch (error){
-            log(LogLevel.ERROR, error)
-            res.sendStatus(500)
+        if(authenticatedUser){
+            return res.sendStatus(200)
         }
-
+        return res.sendStatus(401)
+    } catch (error){
+        log(LogLevel.ERROR, error)
+        return res.sendStatus(401)
+    }
 })
 
+app.get('/api/auth/refresh', authenticateJwt, async (req: Request, res: Response) => {
+    const authenticatedUser = decodeJwt(getTokenFromAuthHeader(req))
+    try{
+        if(authenticatedUser){
+            const user = await userDb.findUserByName(authenticatedUser.name)
+            const tokenData: authenticatedUser = {
+                uuid: user.uuid,
+                name: user.name,
+                termsAccepted: user.termsAccepted,
+                accounts: await accountDb.findAccountsIdByUserUUID(user.uuid),
+                wallets: await walletDb.findWalletsIdByUserUUID(user.uuid)
+            }
+
+            const jwtToken = generateJwt(tokenData)
+
+            res
+            .cookie("access_token", jwtToken, {
+                httpOnly: false,
+                secure: false,
+              })
+            .status(200).send(
+                    JSON.stringify({
+                        accesToken: jwtToken
+                    })
+                )
+        }
+
+    } catch (error){
+        log(LogLevel.ERROR, error)
+        res.sendStatus(500)
+    }
+
+})
 
 app.post('/api/user/update', authenticateJwt, async (req:  Request, res: Response) => {
 

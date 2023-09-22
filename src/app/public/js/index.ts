@@ -1,4 +1,4 @@
-import { fetchMessages, getDaemonInfo, getDaemonStakedTokens, getErrorLog, getLogsLastSeen, getUserName, getUserSettings, getUserTerms, logout, refreshAuthToken, setUserTermsAccepted } from './apicalls'
+import { fetchMessages, getDaemonInfo, getDaemonStakedTokens, getErrorLog, getLogsLastSeen, getUserName, getUserSettings, getUserTerms, logout, refreshAuthToken, setUserTermsAccepted, validateAuthToken } from './apicalls'
 import * as bootstrap from 'bootstrap'
 import { roundToThreeDecimals, toNormalUnits } from '../../../common/utils/units'
 import { userTermsModal } from './modals'
@@ -124,6 +124,7 @@ setInterval(async function() {
 
 setInterval(async function() {
     checkNewLogs()
+    validateAuthToken()
 }, 60000);
 
 

@@ -1,6 +1,6 @@
 
 import { DaemonOffer, DaemonPricePeg } from '../../../common/daemon/types/daemon'
-import { getOffers, getOffersFromDaemon, getPricePegsFromDaemon, getUserSettings, getWallets, processPurchaseAndMessageSeller, storeFrontAddOffer, storeFrontCheckSellerPubKey, storeFrontReportOffer } from './apicalls'
+import { getOffers, getOffersFromDaemon, getPricePegsFromDaemon, getUserSettings, getWallets, processPurchaseAndMessageSeller, refreshAuthToken, storeFrontAddOffer, storeFrontCheckSellerPubKey, storeFrontReportOffer } from './apicalls'
 import { showToast as showToast } from './toast'
 import { countries } from '../../../common/constants/countries'
 import { cropString, cropStringEnd } from '../../../common/utils/strings'
@@ -533,6 +533,8 @@ if(formPurchaseOffer){
     formPurchaseOffer.addEventListener('submit', async (e) => {
         e.preventDefault()
 
+        await refreshAuthToken()
+        
         if(! new Array(...formFieldsPurchaseOffer.classList).includes('was-validated')){
             return
         }   

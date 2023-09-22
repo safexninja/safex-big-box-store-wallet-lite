@@ -1,6 +1,6 @@
 
 import { DaemonOffer, DaemonOffers, DaemonPricePeg } from '../../../common/daemon/types/daemon'
-import { getAccounts, getOffersFromDaemon, storeFrontGetSellerRegistrionCheck, getWallets, storeFrontSubmitSellerRegistration, storeFrontRevokeSellerRegistration, getPricePegs, getPricePegsFromDaemon, storeFrontGetOffersDetails, getStore, storeFrontRemoveOffer, storeFrontAddOffer, getUserSettings, getDaemonHeight } from './apicalls'
+import { getAccounts, getOffersFromDaemon, storeFrontGetSellerRegistrionCheck, getWallets, storeFrontSubmitSellerRegistration, storeFrontRevokeSellerRegistration, getPricePegs, getPricePegsFromDaemon, storeFrontGetOffersDetails, getStore, storeFrontRemoveOffer, storeFrontAddOffer, getUserSettings, getDaemonHeight, refreshAuthToken } from './apicalls'
 import { FormValidity, handleFormValidationAndSummarize, } from './formvalidation'
 import { showToast as showToast } from './toast'
 import { countries } from '../../../common/constants/countries'
@@ -288,6 +288,8 @@ if(formListingsSelect){
 if(confirmCreateOfferButton){
     confirmCreateOfferButton.addEventListener('click', async (e) => {
         e.preventDefault()
+
+        await refreshAuthToken()
         
         dismissAlert(AlertArea.MODAL_ALERT_AREA_CREATE_OFFER)
         dismissAlert(AlertArea.MODAL_ALERT_AREA_EDIT_OFFER)

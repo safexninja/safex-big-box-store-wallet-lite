@@ -223,6 +223,17 @@ export async function refreshAuthToken(): Promise<boolean> {
  return response.ok
 }
 
+export async function validateAuthToken(): Promise<boolean> {
+  const response = await fetch('http://localhost:3101/api/auth/validate', {
+    method: 'GET'
+  });
+
+  if(!response.ok){
+    window.location.reload()
+  }
+  return response.ok
+}
+
 export async function getUserName(): Promise<UserName> {
   const response = await fetch('http://localhost:3101/api/user/name', {
     method: 'GET'
@@ -236,6 +247,9 @@ export async function fetchMessages(): Promise<boolean> {
     method: 'GET'
   });
 
+  if(!response.ok){
+    window.location.reload()
+  }
  return response.ok
 }
 
