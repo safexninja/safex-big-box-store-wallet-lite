@@ -9,7 +9,7 @@ import { BB_OfferDescription, TWM_OfferDescription } from '../../../common/inter
 import * as bootstrap from 'bootstrap'
 import { clearAllBackDrops, confirmationModal, confirmationModalButton, confirmationModalText, offerDetailsModal, reportOfferModal } from './modals'
 import { getEvaluatedPrice }from '../../../common/helpers/offers'
-import { AlertArea, AlertType, dismissAlert, isValidImageUrl, newLineToBreak, removeHTML } from './utils'
+import { AlertArea, AlertType, dismissAlert, initializeTooltips, isValidImageUrl, newLineToBreak, removeHTML } from './utils'
 import { PollUntil } from 'poll-until-promise'
 import { WalletWsConnectionHandler, websocketConnectionManager, WsConnectionState, WsPurchaseState } from './websocket'
 import { handleFormValidationAndSummarize, FormValidity } from './formvalidation'
@@ -215,8 +215,7 @@ async function displayResults(daemonOffers: DaemonOffer[]): Promise<boolean>{
                 addDefaultCard(offer)
             }
 
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+           initializeTooltips()
 
             if(i == daemonOffers.length -1){
                 enableForm()
@@ -520,8 +519,7 @@ if(confirmPurchaseOfferButton){
             offerDetailsModal.hide();
             confirmationModal.show();
 
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+            initializeTooltips()
             
         }
         
@@ -532,8 +530,6 @@ if(confirmPurchaseOfferButton){
 if(formPurchaseOffer){
     formPurchaseOffer.addEventListener('submit', async (e) => {
         e.preventDefault()
-
-        await refreshAuthToken()
         
         if(! new Array(...formFieldsPurchaseOffer.classList).includes('was-validated')){
             return
@@ -911,8 +907,7 @@ async function openOffer(offerId: string, seller: string) {
 
     offerDetails_imageCarousel.innerHTML = carousel.join('')   
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+   initializeTooltips()
     
     collapsePurchase.hide()
     formPurchaseOffer.classList.remove('was-validated')

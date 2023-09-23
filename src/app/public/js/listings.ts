@@ -9,7 +9,7 @@ import { clearAllBackDrops, confirmationModal, confirmationModalButton, confirma
 import { WalletWsConnectionHandler, websocketConnectionManager, WsConnectionState } from './websocket'
 import { PollUntil } from 'poll-until-promise'
 import { toNormalUnits } from '../../../common/utils/units'
-import { dismissAlert, AlertArea, AlertType, isValidImageUrl, replaceSpecialChars } from './utils'
+import { dismissAlert, AlertArea, AlertType, isValidImageUrl, replaceSpecialChars, initializeTooltips } from './utils'
 import { cropString } from '../../../common/utils/strings'
 import { IWalletStrict } from '../../../common/db/models/interfaces'
 import { StoreFrontSellerOffersDetails } from '../../../common/helpers/stores'
@@ -288,9 +288,7 @@ if(formListingsSelect){
 if(confirmCreateOfferButton){
     confirmCreateOfferButton.addEventListener('click', async (e) => {
         e.preventDefault()
-
-        await refreshAuthToken()
-        
+                
         dismissAlert(AlertArea.MODAL_ALERT_AREA_CREATE_OFFER)
         dismissAlert(AlertArea.MODAL_ALERT_AREA_EDIT_OFFER)
         formCreateOffer.classList.remove('was-validated')
@@ -1164,8 +1162,7 @@ async function displayResults(daemonOffers: DaemonOffer[]): Promise<boolean>{
     })
 
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    initializeTooltips()
 
     const showInStoreButtons = document.querySelectorAll("button[data-function=show_in_store]")
     if(showInStoreButtons){
@@ -1462,8 +1459,7 @@ export async function checkSellerRegistration(): Promise<string | undefined> {
         return registrationStatus.status
     }
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    initializeTooltips()
 
     return undefined
 
@@ -1491,8 +1487,7 @@ async function initListings(){
     await populateAcountList()
     await initialLoad()
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+   initializeTooltips()
 }
 
 initListings()

@@ -1,3 +1,5 @@
+import * as bootstrap from 'bootstrap'
+
 export enum AlertArea {
     ALERT_AREA = 'alert_area',
     MODAL_ALERT_AREA_CREATE_USER = 'modal_alert_area_create_user',
@@ -96,4 +98,14 @@ export function newLineToBreak(string: string){
   } catch (error){
     return ""
   }
+}
+
+export function initializeTooltips(){
+  const persistentTooltips = document.querySelectorAll('div[role="tooltip"]')
+  persistentTooltips.forEach((tooltip)=>{
+    tooltip.remove()
+  })
+
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {trigger : 'hover'}))
 }

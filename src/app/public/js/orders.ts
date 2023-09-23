@@ -10,6 +10,7 @@ import { TxnStatus } from '../../../common/enums/txns'
 import { OrderStatus } from '../../../common/enums/orders'
 import * as bootstrap from 'bootstrap'
 import { explorerAddress } from './index'
+import { initializeTooltips } from './utils'
 
 
 const containerNewOrders = document.getElementById('container_new_orders') as HTMLDivElement
@@ -68,8 +69,7 @@ async function displayOpenOrders(): Promise <boolean>  {
         card.outerHTML = createCard(order, OrderCardStyle.DELIVERED)
     }
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    initializeTooltips()
 
     return true
 }
@@ -151,8 +151,7 @@ async function displayClosedOrders(): Promise <boolean> {
         card.outerHTML = createClosedCard(order, OrderCardStyle.CLOSED)
     })
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    initializeTooltips()
 
     return true
 }

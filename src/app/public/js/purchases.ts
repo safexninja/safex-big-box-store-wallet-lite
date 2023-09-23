@@ -3,7 +3,7 @@
 import { getOpenPurchases, getClosedPurchases, OpenPurchase, ClosedPurchase, purchaseRate, getDaemonHeight, getUserSettings } from './apicalls'
 import { convertTimestampToDate } from '../../../common/utils/dates'
 import { showMessageAndManageModal } from './managing'
-import { newLineToBreak, removeHTML } from './utils'
+import { initializeTooltips, newLineToBreak, removeHTML } from './utils'
 import { TxnStatus } from '../../../common/enums/txns'
 import * as bootstrap from 'bootstrap'
 import { clearAllBackDrops, confirmationModal, ratePurchaseModal } from './modals'
@@ -78,8 +78,7 @@ async function displayOpenPurchases(): Promise <boolean> {
         card.outerHTML = createCard(purchase, PurchaseCardStyle.DELIVERED)
     }
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    initializeTooltips()
     
     return true
 }
@@ -97,8 +96,7 @@ async function displayClosedPurchases(): Promise <boolean> {
         card.outerHTML = createClosedCard(purchase, PurchaseCardStyle.CLOSED)
     }
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    initializeTooltips()
 
     return true
 }

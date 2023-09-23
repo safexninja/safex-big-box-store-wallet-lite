@@ -6,7 +6,7 @@ import { roundToTenDecimals, roundToTwoDecimals, toNormalUnits } from '../../../
 import { convertTimestampToDate } from '../../../common/utils/dates'
 import { WalletWsConnectionHandler, websocketConnectionManager, WsAccountRecoverState, WsConnectionCreateWalletArgs, WsConnectionOpenWalletType, WsConnectionState, WsHistoryLoadingState} from './websocket'
 import { PollUntil } from 'poll-until-promise'
-import { AlertArea, AlertType, dismissAlert, newLineToBreak, removeHTML } from './utils'
+import { AlertArea, AlertType, dismissAlert, initializeTooltips, newLineToBreak, removeHTML } from './utils'
 import { sendModal, confirmationModal, confirmationModalButton, createWalletModal, createWalletFromKeysModal, confirmationModalText, clearAllBackDrops, editWalletLabelModal, restoreAccountModal, createAccountModal, hardRescanModal, historyModal, alertModal, editAccountModal, removeAccountModal, stakingModal} from './modals'
 import { DaemonAccountInfo } from '../../../common/daemon/types/daemon'
 import { IAccountStrict } from '../../../common/db/models/interfaces'
@@ -95,8 +95,6 @@ if(formSendCashToken){
     formSendCashToken.addEventListener('submit', async (e) => {
         e.preventDefault()
 
-        await refreshAuthToken()
-
         if(! new Array(...formSendCashToken.classList).includes('was-validated')){
             return
         }   
@@ -162,11 +160,8 @@ if(formHardRescanWallet){
     formHardRescanWallet.addEventListener('submit', async (e) => {
         e.preventDefault()
 
-        await refreshAuthToken()
-
         const wallet = formHardRescanWallet.getAttribute("data-wallet")
-        await refreshAuthToken() 
-            
+                    
         if(wallet ){
 
             if(startRescanWalletButton){
@@ -898,6 +893,7 @@ if(formCreateWalletFromKeys){
                     await setWalletLabel(newConnection.getUuid(), formFields.label.element.value)
                     createWalletFromKeysModal.hide()
                     initWallets()
+                    showToast("Important!", "Wait for the wallet to fully synchronize to the top block before doing anything with the wallet, to prevent unexpected behavior.", 30000)
                 })
                 .catch(err => console.error(err));
         } 
@@ -1084,9 +1080,7 @@ async function displayWallets(): Promise<boolean>{
         walletAccordion.outerHTML = accordion.join('') 
         const collapseList = [walletAccordion].map(colEl => new bootstrap.Collapse(colEl))
 
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-    
+        initializeTooltips()
 
        
     })
@@ -1608,8 +1602,7 @@ async function showStakingModal(uuid: string){
                     stakeRow.outerHTML = stakeRowData.join('')
                 }
 
-                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+                initializeTooltips()
 
                 //binding functions to unstake buttons
                 const unStakingButtons = document.querySelectorAll("button[data-function=unstaking]")

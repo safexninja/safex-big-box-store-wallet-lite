@@ -1,5 +1,6 @@
 import { logout } from "./apicalls";
 import * as bootstrap from 'bootstrap'
+import { initializeTooltips } from "./utils";
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -77,8 +78,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     const defaultPage = document.querySelector("#page_market")
     defaultPage?.classList.remove("d-none");
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    initializeTooltips()
 
 });
 

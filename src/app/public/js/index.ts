@@ -1,12 +1,11 @@
 import { fetchMessages, getDaemonInfo, getDaemonStakedTokens, getErrorLog, getLogsLastSeen, getUserName, getUserSettings, getUserTerms, logout, refreshAuthToken, setUserTermsAccepted, validateAuthToken } from './apicalls'
-import * as bootstrap from 'bootstrap'
 import { roundToThreeDecimals, toNormalUnits } from '../../../common/utils/units'
 import { userTermsModal } from './modals'
 import { ErrorLogSeverity } from '../../../common/db/enums/errorlog'
 import { showToast } from './toast'
+import { initializeTooltips } from './utils'
 
-const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+initializeTooltips()
 
 export var explorerAddress: string
 
