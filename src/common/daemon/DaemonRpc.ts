@@ -20,6 +20,7 @@ export class DaemonRpc {
   public setAddress(address: string): void{
     this.addres = address
     this.baseUrl = `${address}:${this.port}`;
+    log(LogLevel.MESSAGE, "Setting daemon URL to: " + address)
   }
 
   public async getHeight(): Promise<DaemonHeight> {

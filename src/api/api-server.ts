@@ -160,7 +160,6 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
                     const userSettings = await userSettingsDb.findSettingsByUserUUID(tokenData.uuid, CONFIG.HashedMasterPassword)
 
                     daemon.setAddress(userSettings.daemonAddress)
-                    log(LogLevel.MESSAGE, "Setting daemon URL to: " + userSettings.daemonAddress)
 
                     const jwtToken = generateJwt(tokenData)
 
@@ -293,6 +292,7 @@ app.post('/api/user/settings', authenticateJwt, async (req:  Request, res: Respo
             } else {
                 await userSettingsDb.updateUserSettings(authenticatedUser.uuid, {uuid: existingSettings.uuid, user: existingSettings.user, defaultCountry: requestData.defaultCountry, defaultAddress: requestData.defaultAddress, daemonAddress: requestData.daemonAddress, explorerAddress: requestData.explorerAddress}, CONFIG.HashedMasterPassword)
             }
+            daemon.setAddress(requestData.daemonAddress)
         }
         res.status(200).send({status: "OK"})
     } catch (error){

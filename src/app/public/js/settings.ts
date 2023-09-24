@@ -21,15 +21,12 @@ if(formUserSettings){
         if(!savedSettings){
             showToast("Error", "Something went wrong while trying to save your settings", 15000)
         } else{
-            showToast("Saved!", "Your settings are saved", 5000)
+            showToast("Saved!", "Your settings are saved, application will reload ...", 5000)
         }
         
-        const formMarketSelectCountry = document.getElementById('select_country') as HTMLSelectElement
-        const btnMarketSearch = document.getElementById('btn_search') as HTMLFormElement
-        if(formMarketSelectCountry) {
-            formMarketSelectCountry.value = selectDefaultCountry.value
-            btnMarketSearch.click()
-        }
+        setTimeout(()=>{
+            window.location.reload()
+        }, 700)
        
     })
 

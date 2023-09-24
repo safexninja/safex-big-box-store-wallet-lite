@@ -1,6 +1,6 @@
 {
   "name": "Safex-Big-Box-Store-Wallet",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Safex Big Box Store Wallet Lite",
   "productDescription": "Lite stand alone version of the Safex Big Box Store wallet, without local daemon and block explorer",
   "main": "out/app/electron/electron.js",
