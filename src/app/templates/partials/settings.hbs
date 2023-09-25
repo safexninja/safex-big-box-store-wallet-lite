@@ -16,12 +16,15 @@
     <div class="container pt-3 pb-4 px-0">
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-7">
 
 
                     <form id="form_settings" class="needs-validation"  autocomplete="off" novalidate>                        
                     </form>
 
+                    <div class="alert alert-danger d-none" id="modal_alert_area_user_settings" role="alert">
+                        
+                    </div>
 
                     <form id="form_user_settings" class="needs-validation" autocomplete="off" novalidate>
 
@@ -37,21 +40,23 @@
 
                         <div class="mb-3">
                             <label for="input_default_address" class="form-label">Default Address</label>
-                            <textarea placeholder="Provide full name, street, (aparment) number, zipcode, state ..." type="text" class="form-control form-control-sm mt-1" id="input_default_address" rows="10" style="font-size: smaller;" aria-describedby="help_default_address"></textarea>
+                            <textarea placeholder="Provide full name, street, (aparment) number, zipcode, state ..." type="text" class="form-control form-control-sm mt-1" id="input_default_address" rows="7" style="font-size: smaller;" aria-describedby="help_default_address"></textarea>
                             <div class="invalid-feedback" feedback-for="input_default_address"></div>
                             <div id="help_default_address" class="form-text">Provide an address. This address will be used as default delivery address when making a purchase. You can leave out the country; the selected country above will be automatically added to your address when doing a purchase.</div>
                         </div>
 
                          <div class="mb-3">
                             <label for="input_settings_daemon_address" class="form-label">Daemon / Blockchain Node Address</label>
-                            <input type="text" class="form-control form-control-sm" id="input_settings_daemon_address" maxlength="50">
+                            <input type="text" class="form-control form-control-sm" id="input_settings_daemon_address" maxlength="100" aria-describedby="help_settings_daemon_address">
                             <div class="invalid-feedback" feedback-for="input_settings_daemon_address"></div>
+                            <div id="help_settings_daemon_address" class="form-text">Base URL of blockchain node i.e. 'http://rpc.safex.org' (default), or 'http://localhost'</div>
                         </div>
 
                         <div class="mb-3">
                             <label for="input_settings_explorer_address" class="form-label">Block Explorer Address</label>
-                            <input type="text" class="form-control form-control-sm" id="input_settings_explorer_address" maxlength="50">
+                            <input type="text" class="form-control form-control-sm" id="input_settings_explorer_address" maxlength="100" aria-describedby="help_settings_explorer_address">
                             <div class="invalid-feedback" feedback-for="input_settings_explorer_address"></div>
+                            <div id="help_settings_explorer_address" class="form-text">Base URL of blockchain explorer i.e. 'https://explore.safex.org' (default)</div>
                         </div>
 
                         </fieldset>

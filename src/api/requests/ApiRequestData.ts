@@ -61,6 +61,17 @@ export class UserSettings extends ApiRequestData {
     }
 }
 
+export class DaemonUrl extends ApiRequestData {
+    constructor(
+        public url: string = '',
+
+    ){
+        super()
+        this.url = url;
+    }
+}
+
+
 export class WalletUpdateInfo extends ApiRequestData {
     constructor(
         public uuid: string = '',

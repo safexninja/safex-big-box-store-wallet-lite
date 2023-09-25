@@ -15,6 +15,7 @@ export enum AlertArea {
     MODAL_ALERT_AREA_PURCHASE_OFFER_PRECHECK = 'modal_alert_area_offer_purchase_precheck',
     MODAL_ALERT_AREA_MESSAGE_AND_MANAGE = 'modal_alert_area_message_and_manage',
     MODAL_ALERT_AREA_STAKING = 'modal_alert_area_staking',
+    MODAL_ALERT_AREA_USER_SETTINGS = 'modal_alert_area_user_settings',
     
 }
 
@@ -68,6 +69,16 @@ export function isValidHttpsUrl(url: string) {
     }
   }
 
+export function isValidUrl(url: string) {
+  try {
+
+    const newUrl = new URL(url);
+    return newUrl.protocol === 'https:' || newUrl.protocol === 'http:';
+  } catch (err) {
+    return false;
+  }
+}
+
  export function isValidImageUrl(url: string) {
     try {
       
@@ -90,7 +101,6 @@ export function removeHTML(string: string){
 export function replaceSpecialChars(string: string){
   return string.replace(/“/g, "'").replace(/”/g, "'").replace(/‘/g, "'").replace(/’/g, "'");
 }
-
 
 export function newLineToBreak(string: string){
   try{

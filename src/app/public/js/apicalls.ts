@@ -542,6 +542,18 @@ export async function getDaemonStakedTokens(): Promise<StakedTokens> {
    return response.json()
 }
 
+export async function checkDaemonOnUrlIsOk(url: string): Promise<boolean> {
+  const response = await fetch('http://localhost:3101/api/user/settings/daemon/check', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({url})
+    });
+
+   return response.ok
+}
+
 export async function getWallets(): Promise<IWalletStrict[]> {
   const response = await fetch('http://localhost:3101/api/user/wallets', {
       method: 'GET'

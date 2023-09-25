@@ -20,7 +20,7 @@ import  * as messageDb from '../common/db/messages';
 import  * as historyDb from '../common/db/history';
 import  * as errorLogDb from '../common/db/errorlogs';
 import { connectDb, disconnectDb } from '../common/db/connection';
-import { AuthLogin, OrderClose, OrderCloseCommunication, OrderGetMessages, OrderReply, OrderShipped, OrderValidation, PurchaseAdd, PurchaseClose, PurchaseCloseCommunication, PurchaseConfirmDelivery, PurchaseGetMessages, PurchaseRate, PurchaseReply, SetStore, StoreOfferAdd, StoreOfferRemove, StoreOfferReport, StoreOffersDetails, StoreSellerCheck, StoreSellerRegister, StoreSellerRevoke, UserCreate, UserSettings, UserUpdateInfo, UserUpdatePassword, WalletHistory, WalletUpdateDeleted, WalletUpdateInfo } from './requests/ApiRequestData';
+import { AuthLogin, DaemonUrl, OrderClose, OrderCloseCommunication, OrderGetMessages, OrderReply, OrderShipped, OrderValidation, PurchaseAdd, PurchaseClose, PurchaseCloseCommunication, PurchaseConfirmDelivery, PurchaseGetMessages, PurchaseRate, PurchaseReply, SetStore, StoreOfferAdd, StoreOfferRemove, StoreOfferReport, StoreOffersDetails, StoreSellerCheck, StoreSellerRegister, StoreSellerRevoke, UserCreate, UserSettings, UserUpdateInfo, UserUpdatePassword, WalletHistory, WalletUpdateDeleted, WalletUpdateInfo } from './requests/ApiRequestData';
 import * as crypto from '../common/crypto/crypto'
 
 // types, interfaces
@@ -263,6 +263,45 @@ app.post('/api/user/update', authenticateJwt, async (req:  Request, res: Respons
         res.sendStatus(500)
     }
 
+})
+
+app.post('/api/user/settings/daemon/check', authenticateJwt, async (req:  Request, res: Response) => {
+
+    let apiRequestValidation: ApiRequestValidation = validateMessage(req.body, new DaemonUrl())
+    if( apiRequestValidation.status === ApiRequestValidationStatus.ERROR ){
+        res.status(400).send({error: apiRequestValidation.message})
+        return
+    }
+        
+    const authenticatedUser = decodeJwt(getTokenFromAuthHeader(req))
+    const requestData = req.body as DaemonUrl
+    try{
+        if(authenticatedUser){
+
+            const testDaemon = new DaemonRpc(requestData.url, CONFIG.DaemonPort)
+            const testDaemonInfo = await testDaemon.getInfo()
+
+            if(testDaemonInfo.error || testDaemonInfo.status !== "OK"){
+                log(LogLevel.WARN, `Daemon not reachable on provided url '${requestData.url}' or daemon status is not OK`)
+                return res.sendStatus(418)
+            }
+
+            if(testDaemonInfo.mainnet == true && CONFIG.Network !== "mainnet"){
+                log(LogLevel.WARN, `Daemon on provided url '${requestData.url}' is running on mainnet, expect is ${CONFIG.Network}`)
+                return res.sendStatus(418)
+            }
+
+            if(testDaemonInfo.stagenet == true && CONFIG.Network !== "stagenet"){
+                log(LogLevel.WARN, `Daemon on provided url '${requestData.url}' is running on stagenet, expect is ${CONFIG.Network}`)
+                return res.sendStatus(418)
+            }
+
+        }
+        return res.sendStatus(200)  
+    } catch (error){
+        log(LogLevel.ERROR, error)
+        return res.sendStatus(500)
+    }
 })
 
 
@@ -2427,6 +2466,23 @@ app.get('/api/message/fetch', authenticateJwt, async (req:  Request, res: Respon
     try{
         if(authenticatedUser){
 
+            // skip fetching messages while daemon status 
+            const daemonInfo = await daemon.getInfo()
+
+            if(!daemonInfo.target_height){
+                daemonInfo.target_height = 1
+            }
+        
+            if(!daemonInfo.height){
+                log(LogLevel.WARN, "Not fetching messages because daemon info is unknown ...")
+                return
+            }
+        
+            if(daemonInfo.height < daemonInfo.target_height){
+                log(LogLevel.WARN, "Not fetching messages because daemon is syncing ...")
+                return
+            }
+
             // build a list of store front api's to go over and fetch messages
             let storeFrontsToFetchMessagesFrom: storeFrontFetchMessageEntry[] = []
 
@@ -3310,12 +3366,12 @@ async function enrichOpenPurchasesAndOrders(){
     }
 
     if(!daemonInfo.height){
-        log(LogLevel.INFO, "Not enriching because daemon info is unknown ...")
+        log(LogLevel.WARN, "Not enriching because daemon info is unknown ...")
         return
     }
 
     if(daemonInfo.height < daemonInfo.target_height){
-        log(LogLevel.INFO, "Not enriching because daemon is syncing ...")
+        log(LogLevel.WARN, "Not enriching because daemon is syncing ...")
         return
     }
 

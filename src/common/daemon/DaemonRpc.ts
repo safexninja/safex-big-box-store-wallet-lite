@@ -76,7 +76,10 @@ export class DaemonRpc {
         outgoing_connections_count: undefined,
         target_height: undefined,
         top_block_hash: undefined, 
-        status: "Error", error: error };
+        status: "Error", error: error,
+        stagenet: false,
+        mainnet: false
+       };
     }
   }
 

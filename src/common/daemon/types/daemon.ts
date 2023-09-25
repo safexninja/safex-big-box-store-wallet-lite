@@ -24,6 +24,8 @@ export type DaemonInfo = {
   top_block_hash: string | undefined;
   status: string;
   error: any;
+  mainnet: boolean;
+  stagenet: boolean;
 };
 
 export type DaemonBlock = {
