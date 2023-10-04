@@ -1,4 +1,4 @@
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, Menu, MenuItemConstructorOptions} from 'electron'
 import { ChildProcess, fork } from "child_process";
 import path from "path";
 import { connectDb, createTables, disconnectDb } from '../../common/db/connection';
@@ -71,6 +71,23 @@ function createWindow() {
     mainWindow.on('close', ()=>{
         closeBackgroundServers();
     })
+
+    const menuTemplate: MenuItemConstructorOptions[] = [
+        {
+          label: 'Edit',
+          submenu: [
+            { role: 'cut' },
+            { role: 'copy' },
+            { role: 'paste' }
+          ]
+        }
+      ];
+
+    const contextMenu = Menu.buildFromTemplate(menuTemplate);
+
+    mainWindow.webContents.on('context-menu', (event, params) => {
+        contextMenu.popup({ window: mainWindow!, x: params.x, y: params.y });
+      });
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
