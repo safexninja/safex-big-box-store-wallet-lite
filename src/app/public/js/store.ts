@@ -129,7 +129,6 @@ function autocomplete(input: any, suggestionsArray: any) {
     var currentFocus: number;
 
     input.addEventListener("input", function(e) {
-        console.log("input in text box: " + this.value)
         var autoCompleteSuggestions: HTMLDivElement, suggestion: HTMLElement, i: number, val = this.value;
       
         closeAllLists();

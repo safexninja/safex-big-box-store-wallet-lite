@@ -1054,7 +1054,7 @@ async function displayWallets(): Promise<boolean>{
                                     accordion.push(`<div class="col-2 text_small">${account.account}</div>`)
                                     accordion.push(`<div class="col-1 text_small"><i class='bx bx-key fs-4 walleticons' style="cursor: pointer;" data-function="show_account_keys" data-account="${account.uuid}" data-wallet="${wallet.uuid}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Show account private keys"></i></div>`)
                                     const accountStatus = account.status == 2 ? "active" : "pending"
-                                    accordion.push(`<div class="col-1 text_small">${accountStatus}</div>`)
+                                    accordion.push(`<div class="col-1 text_small" data="account_status" data-account="${account.account}" data-wallet="${wallet.uuid}">${accountStatus}</div>`)
                                     accordion.push(`<div class="col-5 text_small" data-account-desc-for="${account.account}">Description</div>`)
                                     accordion.push(`<div class="col-2 text_small">${account.creationHeight}</div>`)
                                     accordion.push(`<div class="col-1 text_small">
