@@ -648,7 +648,6 @@ export class WalletWsConnectionHandler {
             if(accountInWallet){
                 const status = accountInWallet.status == 2 ? "active" : "pending"
                 accountDisplayField.innerText = status
-                console.log(`set status to ${status} for account ${accountName}`)
             }
         })
 

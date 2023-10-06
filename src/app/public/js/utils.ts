@@ -119,3 +119,11 @@ export function initializeTooltips(){
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
   const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {trigger : 'hover'}))
 }
+
+export function boolToText(value: number | boolean | string): string {
+  if( value == 0 || value == false || value == "false"){
+    return "No"
+  } else {
+    return "Yes"
+  }
+}
