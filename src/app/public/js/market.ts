@@ -907,7 +907,7 @@ async function openOffer(offerId: string, seller: string) {
 
     offerDetails_imageCarousel.innerHTML = carousel.join('')   
 
-   initializeTooltips()
+    initializeTooltips()
     
     collapsePurchase.hide()
     formPurchaseOffer.classList.remove('was-validated')
