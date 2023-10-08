@@ -613,6 +613,7 @@ export class WalletWsConnectionHandler {
         const tokenBalance = document.querySelectorAll(`span[data=token_balance][data-wallet="${this.uuid}"]`)
         const cashBalancePending = document.querySelectorAll(`span[data=cash_balance_pending][data-wallet="${this.uuid}"]`)
         const tokenBalancePending = document.querySelectorAll(`span[data=token_balance_pending][data-wallet="${this.uuid}"]`)
+        const accountStatus = document.querySelectorAll(`div[data=account_status][data-wallet="${this.uuid}"]`)
         
         height.forEach((field)=>{
             (field as HTMLElement).innerText = message.data.height.toString()
@@ -636,6 +637,18 @@ export class WalletWsConnectionHandler {
 
         tokenBalancePending.forEach((field)=>{
             (field as HTMLElement).innerText = toNormalUnits(message.data.tokenBalance - message.data.unlockedTokenBalance).toString()
+        })
+
+        accountStatus.forEach((field)=>{
+            const allAccountsInWallet = message.data.accounts as WsSafexAccount[]
+            const accountDisplayField: HTMLElement = field as HTMLElement
+            const accountName = accountDisplayField.getAttribute("data-account")
+            const accountInWallet = allAccountsInWallet.find((acc) => acc.account == accountName)
+
+            if(accountInWallet){
+                const status = accountInWallet.status == 2 ? "active" : "pending"
+                accountDisplayField.innerText = status
+            }
         })
 
         this.balance = message.data.balance

@@ -404,6 +404,13 @@ export async function getUserSettings(): Promise<IUserSettings> {
    return response.json()
 }
 
+export async function getUserStores(): Promise<string[]> {
+  const response = await fetch('http://localhost:3101/api/user/stores', {
+      method: 'GET'
+    });
+   return response.json()
+}
+
 
 export async function getUserRegistrations(): Promise<UserRegistration[]> {
   const response = await fetch('http://localhost:3101/api/user/registrations', {

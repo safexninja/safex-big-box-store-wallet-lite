@@ -6,7 +6,7 @@ import { roundToTenDecimals, roundToTwoDecimals, toNormalUnits } from '../../../
 import { convertTimestampToDate } from '../../../common/utils/dates'
 import { WalletWsConnectionHandler, websocketConnectionManager, WsAccountRecoverState, WsConnectionCreateWalletArgs, WsConnectionOpenWalletType, WsConnectionState, WsHistoryLoadingState} from './websocket'
 import { PollUntil } from 'poll-until-promise'
-import { AlertArea, AlertType, dismissAlert, initializeTooltips, newLineToBreak, removeHTML } from './utils'
+import { AlertArea, AlertType, boolToText, dismissAlert, initializeTooltips, newLineToBreak, removeHTML } from './utils'
 import { sendModal, confirmationModal, confirmationModalButton, createWalletModal, createWalletFromKeysModal, confirmationModalText, clearAllBackDrops, editWalletLabelModal, restoreAccountModal, createAccountModal, hardRescanModal, historyModal, alertModal, editAccountModal, removeAccountModal, stakingModal} from './modals'
 import { DaemonAccountInfo } from '../../../common/daemon/types/daemon'
 import { IAccountStrict } from '../../../common/db/models/interfaces'
@@ -1054,7 +1054,7 @@ async function displayWallets(): Promise<boolean>{
                                     accordion.push(`<div class="col-2 text_small">${account.account}</div>`)
                                     accordion.push(`<div class="col-1 text_small"><i class='bx bx-key fs-4 walleticons' style="cursor: pointer;" data-function="show_account_keys" data-account="${account.uuid}" data-wallet="${wallet.uuid}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Show account private keys"></i></div>`)
                                     const accountStatus = account.status == 2 ? "active" : "pending"
-                                    accordion.push(`<div class="col-1 text_small">${accountStatus}</div>`)
+                                    accordion.push(`<div class="col-1 text_small" data="account_status" data-account="${account.account}" data-wallet="${wallet.uuid}">${accountStatus}</div>`)
                                     accordion.push(`<div class="col-5 text_small" data-account-desc-for="${account.account}">Description</div>`)
                                     accordion.push(`<div class="col-2 text_small">${account.creationHeight}</div>`)
                                     accordion.push(`<div class="col-1 text_small">
@@ -1772,7 +1772,7 @@ function renderTxnOverview(historicalTxns: HistoricalTxn[]){
 
                 txnRowData.push(`</div>`)
                 txnRowData.push(`<div class="row text_small mt-2">`)
-                    txnRowData.push(`<div class="col-2"><b>Pending:</b><br>${txn.pending}</div>`)
+                    txnRowData.push(`<div class="col-2"><b>Pending:</b><br>${boolToText(txn.pending)}</div>`)
                     txnRowData.push(`<div class="col-5"><b>Payment Id:</b><br><span class="text_xsmall">${txn.paymentId == "0000000000000000" ? "none" : txn.paymentId  }<span></div>`)
                     txnRowData.push(`<div class="col"><b>SFT:</b><br>${roundToTenDecimals(toNormalUnits(txn.tokenAmount))} SFT</div>`)
                     txnRowData.push(`<div class="col"><b>SFX:</b><br>${roundToTenDecimals(toNormalUnits(txn.cashAmount))} SFX</div>`)

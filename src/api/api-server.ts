@@ -364,6 +364,26 @@ app.get('/api/user/registrations', authenticateJwt, async (req:  Request, res: R
     }
 })
 
+app.get('/api/user/stores', authenticateJwt, async (req:  Request, res: Response) => {
+    const authenticatedUser = decodeJwt(getTokenFromAuthHeader(req))
+    try{
+        if(authenticatedUser){
+            
+            const connectedApis = await connectedApiDb.findAllApisByUser(authenticatedUser.uuid)
+
+            let visistedStores: any = []
+            connectedApis.forEach((api)=>{
+                visistedStores.push(api.url)
+            })
+            res.status(200).send(visistedStores)
+        }
+    } catch (error){
+        log(LogLevel.ERROR, error)
+        res.send
+    }
+})
+
+
 app.get('/api/user/terms', authenticateJwt, async (req:  Request, res: Response) => {
     const authenticatedUser = decodeJwt(getTokenFromAuthHeader(req))
     try{

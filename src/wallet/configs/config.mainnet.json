@@ -2,7 +2,7 @@
     "network": "mainnet",
     "daemonAddress": "http://rpc.safex.org",
     "daemonPort": 17402,
-    "walletInactiveTimeout": 300000,
+    "walletInactiveTimeout": 7200000,
     "fileStoreDir": "/<path>",
     "port": 3150,
     "dbName": "bigbox.db"
